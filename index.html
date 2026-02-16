@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>分数ガンマン 🤠</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{--bg:#1c1008;--sand:#d4a654;--leather:#8b5e3c;--wood:#6b3a1f;--gold:#f0c040;--accent:#c0392b;--success:#27ae60;--text:#f5e6d0;--text-dim:#a08060;--rope:#c8a060;}
+  body{font-family:'Zen Maru Gothic',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;}
+  .game-container{width:100vw;height:100vh;display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden;background:linear-gradient(180deg,#1c1008 0%,#2a1a0e 40%,#3a2510 70%,#1c1008 100%);}
+  .bg-particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+  .bg-particle{position:absolute;border-radius:50%;animation:dust-drift 10s ease-in-out infinite;}
+  @keyframes dust-drift{0%{transform:translate(0,0) scale(1);opacity:0.08}25%{transform:translate(30px,-15px) scale(1.2);opacity:0.15}50%{transform:translate(-10px,10px) scale(0.8);opacity:0.06}75%{transform:translate(20px,5px) scale(1.1);opacity:0.12}100%{transform:translate(0,0) scale(1);opacity:0.08}}
+  .header{z-index:10;display:flex;align-items:center;justify-content:space-between;width:100%;max-width:700px;padding:12px 20px 4px;gap:8px;border-bottom:1px solid rgba(200,160,96,0.15);}
+  .diff-badge{padding:3px 12px;border-radius:8px;font-size:0.7rem;font-weight:900;border:1px solid;}
+  .diff-badge.easy{background:rgba(39,174,96,0.2);color:#5ddf70;border-color:rgba(39,174,96,0.4);}
+  .diff-badge.normal{background:rgba(240,192,64,0.2);color:var(--gold);border-color:rgba(240,192,64,0.4);}
+  .diff-badge.hard{background:rgba(192,57,43,0.2);color:#e74c3c;border-color:rgba(192,57,43,0.4);}
+  .score-display{display:flex;align-items:center;gap:6px;font-size:1.1rem;font-weight:700;}
+  .score-display .star{color:var(--gold);font-size:1.2rem;}
+  .combo-display{font-size:0.85rem;color:var(--gold);font-weight:700;opacity:0;transition:opacity 0.3s;}
+  .combo-display.active{opacity:1;animation:combo-pulse 0.4s ease;}
+  @keyframes combo-pulse{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
+  .quit-btn{background:none;border:1.5px solid rgba(200,160,96,0.25);color:var(--text-dim);padding:3px 10px;border-radius:8px;font-size:0.65rem;font-weight:700;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;transition:all 0.2s;white-space:nowrap;}
+  .quit-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .timer-area{width:100%;max-width:700px;padding:4px 20px;z-index:10;display:flex;align-items:center;gap:10px;}
+  .timer-bar-track{flex:1;height:12px;background:rgba(200,160,96,0.1);border-radius:6px;overflow:hidden;border:1px solid rgba(200,160,96,0.15);}
+  .timer-bar-fill{height:100%;border-radius:5px;transition:width 0.15s linear,background 0.3s;background:linear-gradient(90deg,var(--sand),var(--gold));}
+  .timer-bar-fill.danger{background:linear-gradient(90deg,var(--accent),#e74c3c);}
+  .timer-bar-fill.progress{background:linear-gradient(90deg,var(--leather),var(--sand));}
+  .timer-text{font-size:1.2rem;font-weight:900;min-width:52px;text-align:right;font-variant-numeric:tabular-nums;color:var(--sand);}
+  .timer-text.danger{color:var(--accent);}
+  .time-bonus-float{position:fixed;font-size:1.2rem;font-weight:900;color:var(--gold);pointer-events:none;z-index:200;animation:time-bonus-up 1s ease-out forwards;text-shadow:0 0 10px rgba(240,192,64,0.7);}
+  @keyframes time-bonus-up{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-50px) scale(1.3)}}
+  .countdown-num{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:8rem;font-weight:900;color:var(--accent);pointer-events:none;z-index:180;text-shadow:0 0 40px rgba(192,57,43,0.6),0 0 80px rgba(192,57,43,0.3);animation:countdown-pop 0.9s ease-out forwards;}
+  @keyframes countdown-pop{0%{opacity:0;transform:translate(-50%,-50%) scale(2.5)}15%{opacity:0.9;transform:translate(-50%,-50%) scale(1)}50%{opacity:0.7;transform:translate(-50%,-50%) scale(1.05)}100%{opacity:0;transform:translate(-50%,-50%) scale(0.6)}}
+  .screen-flash{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:170;animation:flash-red 0.3s ease-out forwards;}
+  @keyframes flash-red{0%{background:rgba(192,57,43,0.15)}100%{background:rgba(192,57,43,0)}}
+  .timer-text.countdown-pulse{animation:timer-throb 0.4s ease;}
+  @keyframes timer-throb{0%{transform:scale(1)}30%{transform:scale(1.5);color:var(--accent)}100%{transform:scale(1)}}
+  .play-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;gap:12px;padding:0 20px;width:100%;max-width:700px;}
+  .question-text{font-size:1.05rem;font-weight:700;text-align:center;color:var(--text-dim);}
+  .pie-wrapper{position:relative;width:210px;height:210px;display:flex;align-items:center;justify-content:center;}
+  .pie-chart{width:190px;height:190px;border-radius:50%;position:relative;box-shadow:0 8px 40px rgba(0,0,0,0.6),0 0 20px rgba(200,160,96,0.08),inset 0 0 20px rgba(0,0,0,0.3);overflow:hidden;transition:transform 0.15s ease;border:3px solid rgba(200,160,96,0.3);}
+  .pie-chart canvas{width:100%;height:100%;}
+  .shatter-container{position:absolute;top:0;left:0;width:210px;height:210px;pointer-events:none;z-index:50;}
+  .shard{position:absolute;opacity:1;}
+  @keyframes shard-fly{0%{opacity:1;transform:translate(0,0) rotate(0) scale(1)}100%{opacity:0;transform:translate(var(--tx),var(--ty)) rotate(var(--rot)) scale(0.2)}}
+  .sparkle-burst{position:absolute;top:50%;left:50%;pointer-events:none;z-index:51;}
+  .sparkle{position:absolute;border-radius:50%;animation:sparkle-fly 0.7s ease-out forwards;}
+  @keyframes sparkle-fly{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--sx),var(--sy)) scale(0)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+  .pie-chart.shake{animation:shake 0.4s ease;}
+  .pie-chart.entering{animation:pie-enter 0.2s ease-out;}
+  @keyframes pie-enter{0%{transform:scale(0.3) rotate(-20deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+  .cards-area{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;z-index:10;padding:6px 16px 24px;width:100%;max-width:700px;}
+  .fraction-card{background:linear-gradient(145deg,#3a2410,#4a3018);border:2px solid #6b4a2a;border-radius:10px;padding:10px 16px;cursor:pointer;transition:transform 0.15s,box-shadow 0.2s,border-color 0.2s,background 0.2s;display:flex;flex-direction:column;align-items:center;min-width:62px;position:relative;box-shadow:0 3px 10px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.05);}
+  .fraction-card:hover:not(.disabled){border-color:var(--gold);box-shadow:0 0 15px rgba(240,192,64,0.3),0 4px 15px rgba(0,0,0,0.5);transform:translateY(-3px) scale(1.04);background:linear-gradient(145deg,#4a3018,#5a3820);}
+  .fraction-card:active:not(.disabled){transform:scale(0.93);}
+  .fraction-card.disabled{opacity:0.2;pointer-events:none;border-color:#333;box-shadow:none;}
+  .fraction-card .numerator{font-size:1.4rem;font-weight:900;color:var(--gold);line-height:1;}
+  .fraction-card .fraction-bar{width:32px;height:3px;background:var(--rope);margin:3px 0;border-radius:2px;}
+  .fraction-card .denominator{font-size:1.4rem;font-weight:900;color:var(--sand);line-height:1;}
+  .screen-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,8,2,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;gap:14px;backdrop-filter:blur(10px);overflow-y:auto;}
+  .screen-overlay.hidden{display:none;}
+  .screen-title{font-size:2.2rem;font-weight:900;background:linear-gradient(135deg,var(--gold),#e8a020,var(--sand));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;line-height:1.3;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));}
+  .screen-subtitle{font-size:0.95rem;color:var(--text-dim);text-align:center;max-width:360px;line-height:1.7;}
+  .mode-tabs{display:flex;gap:0;margin-bottom:4px;border-radius:10px;overflow:hidden;border:2px solid rgba(200,160,96,0.2);}
+  .mode-tab{padding:10px 28px;font-size:0.95rem;font-weight:900;cursor:pointer;border:none;font-family:'Zen Maru Gothic',sans-serif;transition:all 0.2s;background:rgba(200,160,96,0.05);color:var(--text-dim);}
+  .mode-tab.active{color:var(--text);}
+  .mode-tab.active.t-normal{background:linear-gradient(135deg,var(--leather),#6b4a2a);}
+  .mode-tab.active.t-gunman{background:linear-gradient(135deg,var(--accent),#a0301f);}
+  .mode-desc{font-size:0.75rem;color:var(--text-dim);text-align:center;max-width:320px;margin-bottom:2px;}
+  .diff-buttons{display:flex;gap:12px;margin-top:6px;flex-wrap:wrap;justify-content:center;}
+  .diff-btn{border:2px solid;padding:14px 28px;border-radius:10px;font-size:1rem;font-weight:900;font-family:'Zen Maru Gothic',sans-serif;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:110px;box-shadow:0 4px 15px rgba(0,0,0,0.4);}
+  .diff-btn:hover{transform:translateY(-3px) scale(1.05);}
+  .diff-btn:active{transform:scale(0.96);}
+  .diff-btn .diff-label{font-size:1.1rem;} .diff-btn .diff-desc{font-size:0.65rem;opacity:0.8;}
+  .diff-btn.easy{background:linear-gradient(135deg,#2a6b3a,#1e5a2e);color:#7ddf90;border-color:#3a8b4a;}
+  .diff-btn.normal{background:linear-gradient(135deg,#6b5020,#5a4018);color:var(--gold);border-color:var(--sand);}
+  .diff-btn.hard{background:linear-gradient(135deg,#6b1a10,#5a1510);color:#ff8070;border-color:#8b3020;}
+  .btn{background:linear-gradient(135deg,var(--leather),var(--wood));color:var(--text);border:2px solid var(--rope);padding:14px 40px;border-radius:12px;font-size:1.15rem;font-weight:900;font-family:'Zen Maru Gothic',sans-serif;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 6px 20px rgba(0,0,0,0.4);margin-top:4px;}
+  .btn:hover{transform:translateY(-2px) scale(1.04);} .btn:active{transform:scale(0.97);}
+  .result-popup{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%);font-size:2rem;font-weight:900;z-index:100;pointer-events:none;opacity:0;white-space:nowrap;}
+  .result-popup.correct{color:var(--gold);animation:popup-correct 0.9s ease forwards;text-shadow:0 0 20px rgba(240,192,64,0.5);}
+  .result-popup.wrong{color:var(--accent);animation:popup-wrong 0.7s ease forwards;}
+  @keyframes popup-correct{0%{opacity:0;transform:translate(-50%,-50%) scale(0.5)}15%{opacity:1;transform:translate(-50%,-50%) scale(1.3)}45%{opacity:1;transform:translate(-50%,-60%) scale(1)}100%{opacity:0;transform:translate(-50%,-80%) scale(0.8)}}
+  @keyframes popup-wrong{0%{opacity:0;transform:translate(-50%,-50%) scale(0.5)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.2)}70%{opacity:1}100%{opacity:0}}
+  .final-stats{display:flex;gap:24px;margin:6px 0;} .stat-item{text-align:center;}
+  .stat-value{font-size:1.8rem;font-weight:900;color:var(--gold);}
+  .stat-label{font-size:0.75rem;color:var(--text-dim);margin-top:2px;}
+  .name-entry-form{display:flex;flex-direction:column;align-items:center;gap:10px;}
+  .name-input{background:rgba(200,160,96,0.08);border:2px solid rgba(200,160,96,0.25);border-radius:10px;padding:8px 14px;font-size:1rem;font-family:'Zen Maru Gothic',sans-serif;color:var(--text);outline:none;width:180px;text-align:center;}
+  .name-input:focus{border-color:var(--gold);} .name-input::placeholder{color:rgba(200,160,96,0.3);}
+  .grade-selector{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;}
+  .grade-btn{padding:5px 12px;border-radius:8px;border:2px solid rgba(200,160,96,0.2);background:rgba(200,160,96,0.05);color:var(--text-dim);font-size:0.75rem;font-weight:700;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;transition:all 0.15s;}
+  .grade-btn:hover{border-color:rgba(200,160,96,0.4);color:var(--sand);}
+  .grade-btn.selected{border-color:var(--gold);color:var(--gold);background:rgba(240,192,64,0.1);box-shadow:0 0 10px rgba(240,192,64,0.15);}
+  .ranking-btn-big{background:linear-gradient(135deg,rgba(240,192,64,0.15),rgba(240,192,64,0.05));border:2px solid var(--gold);color:var(--gold);padding:12px 28px;border-radius:12px;font-size:1rem;font-weight:900;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;transition:all 0.2s;box-shadow:0 0 15px rgba(240,192,64,0.1);animation:ranking-glow 2s ease-in-out infinite alternate;}
+  .ranking-btn-big:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 0 25px rgba(240,192,64,0.25);}
+  @keyframes ranking-glow{0%{box-shadow:0 0 10px rgba(240,192,64,0.08)}100%{box-shadow:0 0 20px rgba(240,192,64,0.2)}}
+  .ranking-btn{background:none;border:2px solid rgba(200,160,96,0.2);color:var(--text-dim);padding:7px 18px;border-radius:10px;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;transition:all 0.2s;}
+  .ranking-btn:hover{border-color:var(--gold);color:var(--gold);}
+  .ranking-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,8,2,0.96);backdrop-filter:blur(10px);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:250;gap:14px;}
+  .ranking-overlay.hidden{display:none;}
+  .ranking-tabs{display:flex;gap:8px;}
+  .ranking-tab{padding:6px 16px;border-radius:8px;border:1px solid rgba(200,160,96,0.15);font-size:0.8rem;font-weight:900;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;background:rgba(200,160,96,0.05);color:var(--text-dim);transition:all 0.2s;}
+  .ranking-tab.active{color:var(--text);}
+  .ranking-tab.active.t-easy{background:rgba(39,174,96,0.25);border-color:rgba(39,174,96,0.4);color:#7ddf90;}
+  .ranking-tab.active.t-normal{background:rgba(240,192,64,0.2);border-color:rgba(240,192,64,0.4);color:var(--gold);}
+  .ranking-tab.active.t-hard{background:rgba(192,57,43,0.25);border-color:rgba(192,57,43,0.4);color:#ff8070;}
+  .ranking-list{width:300px;max-width:90vw;}
+  .ranking-entry{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;margin-bottom:5px;background:rgba(200,160,96,0.04);border:1px solid rgba(200,160,96,0.08);}
+  .ranking-entry.highlight{background:rgba(240,192,64,0.1);border-color:rgba(240,192,64,0.3);}
+  .ranking-rank{font-size:1.2rem;font-weight:900;min-width:32px;text-align:center;}
+  .ranking-rank.r1{color:var(--gold);} .ranking-rank.r2{color:#c0c0c0;} .ranking-rank.r3{color:#cd7f32;}
+  .ranking-name{flex:1;font-weight:700;font-size:0.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .ranking-score{font-weight:900;font-size:1rem;color:var(--gold);}
+  .ranking-detail{font-size:0.65rem;color:var(--text-dim);}
+  .ranking-empty{text-align:center;color:var(--text-dim);padding:24px 0;font-size:0.9rem;}
+  .ranking-grade{font-size:0.6rem;padding:1px 6px;border-radius:6px;background:rgba(200,160,96,0.1);color:var(--text-dim);margin-left:4px;vertical-align:middle;}
+  .new-record-badge{color:var(--gold);font-size:0.9rem;font-weight:700;animation:nr-glow 1s ease-in-out infinite alternate;}
+  @keyframes nr-glow{0%{text-shadow:0 0 5px rgba(240,192,64,0.3)}100%{text-shadow:0 0 15px rgba(240,192,64,0.7)}}
+  @media(max-width:500px){.pie-wrapper{width:170px;height:170px;}.pie-chart{width:155px;height:155px;}.fraction-card{padding:8px 12px;min-width:56px;}.fraction-card .numerator,.fraction-card .denominator{font-size:1.2rem;}.screen-title{font-size:1.7rem;}.diff-btn{min-width:90px;padding:12px 20px;}.mode-tab{padding:8px 20px;font-size:0.85rem;}}
+  @media(max-height:650px){.pie-wrapper{width:150px;height:150px;}.pie-chart{width:135px;height:135px;}.play-area{gap:6px;}.cards-area{padding-bottom:12px;gap:8px;}}
+
+  /* Desert silhouette decoration */
+  .desert-silhouette{position:fixed;bottom:0;left:0;width:100%;height:120px;pointer-events:none;z-index:1;opacity:0.12;}
+  .desert-silhouette svg{width:100%;height:100%;}
+
+  /* BANG effect */
+  .bang-effect{position:fixed;top:38%;left:50%;transform:translate(-50%,-50%);z-index:150;pointer-events:none;animation:bang-pop 0.7s ease-out forwards;}
+  .bang-text{font-size:4rem;font-weight:900;color:var(--accent);text-shadow:0 0 30px rgba(192,57,43,0.8),0 0 60px rgba(240,192,64,0.4),3px 3px 0 #1c1008;letter-spacing:4px;font-family:'Zen Maru Gothic',sans-serif;}
+  @keyframes bang-pop{0%{opacity:0;transform:translate(-50%,-50%) scale(0.2) rotate(-10deg)}10%{opacity:1;transform:translate(-50%,-50%) scale(1.4) rotate(3deg)}30%{transform:translate(-50%,-50%) scale(1) rotate(-1deg)}60%{opacity:1;transform:translate(-50%,-50%) scale(1.05) rotate(0)}100%{opacity:0;transform:translate(-50%,-50%) scale(0.8) rotate(0)}}
+
+  /* Tumbleweed */
+  .tumbleweed{position:fixed;bottom:15%;z-index:150;pointer-events:none;font-size:2.5rem;animation:tumble-roll 1.8s ease-in-out forwards;}
+  @keyframes tumble-roll{0%{left:-60px;transform:rotate(0deg);opacity:0.8}30%{opacity:1}100%{left:110vw;transform:rotate(720deg);opacity:0}}
+
+  /* DRAW timeout effect */
+  .draw-overlay{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:160;animation:draw-dim 1.2s ease-out forwards;}
+  @keyframes draw-dim{0%{background:rgba(0,0,0,0)}15%{background:rgba(0,0,0,0.5)}70%{background:rgba(0,0,0,0.4)}100%{background:rgba(0,0,0,0)}}
+  .draw-text{position:fixed;top:42%;left:50%;transform:translate(-50%,-50%);z-index:161;pointer-events:none;animation:draw-appear 1.2s ease-out forwards;}
+  .draw-text span{font-size:2.8rem;font-weight:900;color:#888;font-family:'Zen Maru Gothic',sans-serif;text-shadow:0 2px 10px rgba(0,0,0,0.8);letter-spacing:6px;}
+  .draw-text .draw-sub{display:block;font-size:0.9rem;color:var(--accent);letter-spacing:2px;margin-top:4px;text-align:center;}
+  @keyframes draw-appear{0%{opacity:0;transform:translate(-50%,-50%) scale(0.8)}10%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}30%{transform:translate(-50%,-50%) scale(1)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(0.95)}}
+
+  /* Time penalty float */
+  .time-penalty-float{position:fixed;font-size:1.3rem;font-weight:900;color:var(--accent);pointer-events:none;z-index:200;animation:time-penalty-up 1.2s ease-out forwards;text-shadow:0 0 10px rgba(192,57,43,0.7);}
+  @keyframes time-penalty-up{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-50px) scale(1.3)}}
+</style>
+</head>
+<body>
+<div class="game-container">
+  <div class="bg-particles" id="bgParticles"></div>
+  <!-- Desert silhouette -->
+  <div class="desert-silhouette"><svg viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,120 L0,90 Q50,80 80,85 Q120,60 160,70 L180,72 Q200,30 220,65 L230,68 Q250,55 270,62 Q290,58 310,70 L350,72 Q380,65 400,75 Q430,50 460,68 Q480,40 500,60 L520,65 Q540,55 560,62 Q580,35 610,58 L640,62 Q670,20 700,55 Q720,48 740,58 L760,60 Q800,52 830,65 Q860,45 890,60 L920,62 Q950,50 980,60 Q1010,55 1040,68 Q1070,40 1100,60 Q1130,55 1160,65 L1200,70 L1200,120 Z" fill="#d4a654"/><ellipse cx="150" cy="50" rx="8" ry="35" fill="#d4a654"/><ellipse cx="150" cy="30" rx="15" ry="6" fill="#d4a654"/><ellipse cx="150" cy="45" rx="12" ry="5" fill="#d4a654"/><ellipse cx="850" cy="45" rx="7" ry="40" fill="#d4a654"/><ellipse cx="850" cy="20" rx="13" ry="5" fill="#d4a654"/><ellipse cx="850" cy="38" rx="11" ry="4" fill="#d4a654"/><ellipse cx="835" cy="55" rx="10" ry="4" fill="#d4a654"/></svg></div>
+  <div class="screen-overlay" id="startScreen">
+    <div class="screen-title">🤠 分数ガンマン</div>
+    <div class="screen-subtitle">円グラフに合う分数カードを<br>クリック一発で撃ち抜け！💥</div>
+    <div class="mode-tabs">
+      <button class="mode-tab t-normal active" id="modeTabNormal" onclick="switchMode('normal')">📝 通常モード</button>
+      <button class="mode-tab t-gunman" id="modeTabGunman" onclick="switchMode('gunman')">🔫 ガンマンモード</button>
+    </div>
+    <div class="mode-desc" id="modeDesc">10問チャレンジ！じっくり正確に答えよう</div>
+    <div style="color:var(--text-dim);font-size:0.9rem;font-weight:700;">難易度をえらぼう 🌵</div>
+    <div class="diff-buttons">
+      <button class="diff-btn easy" onclick="startGame('easy')"><span class="diff-label">🌱 かんたん</span><span class="diff-desc">1/2, 1/3, 3/4 など</span></button>
+      <button class="diff-btn normal" onclick="startGame('normal')"><span class="diff-label">⚡ ふつう</span><span class="diff-desc">2/5, 3/8, 7/10 など</span></button>
+      <button class="diff-btn hard" onclick="startGame('hard')"><span class="diff-label">🔥 むずかしい</span><span class="diff-desc">7/16, 11/20, 約分も</span></button>
+    </div>
+    <button class="ranking-btn-big" onclick="showRanking()">🏆 ランキングを見る</button>
+  </div>
+  <div class="screen-overlay hidden" id="gameOverScreen">
+    <div class="screen-title" id="gameOverTitle">🏜️ 終了！</div>
+    <div class="final-stats">
+      <div class="stat-item"><div class="stat-value" id="finalScore">0</div><div class="stat-label">スコア</div></div>
+      <div class="stat-item"><div class="stat-value" id="finalCorrect">0</div><div class="stat-label">正解数</div></div>
+      <div class="stat-item"><div class="stat-value" id="finalCombo">0</div><div class="stat-label">最大コンボ</div></div>
+    </div>
+    <div class="stat-item"><div class="stat-value" style="font-size:1.1rem;" id="finalAccuracy">0%</div><div class="stat-label">正解率</div></div>
+    <div class="stat-item" id="finalTimeRow" style="display:none;"><div class="stat-value" style="font-size:1.1rem;" id="finalTime">0.0秒</div><div class="stat-label">合計タイム</div></div>
+    <button class="ranking-btn-big" onclick="showRanking(state.mode)">🏆 ランキングを見る</button>
+    <div class="mode-tabs" style="margin-top:6px;">
+      <button class="mode-tab t-normal" id="modeTabNormal2" onclick="switchMode('normal')">📝 通常</button>
+      <button class="mode-tab t-gunman" id="modeTabGunman2" onclick="switchMode('gunman')">🔫 ガンマン</button>
+    </div>
+    <div class="diff-buttons" style="margin-top:4px;">
+      <button class="diff-btn easy" onclick="startGame('easy')">🌱 かんたん</button>
+      <button class="diff-btn normal" onclick="startGame('normal')">⚡ ふつう</button>
+      <button class="diff-btn hard" onclick="startGame('hard')">🔥 むずかしい</button>
+    </div>
+  </div>
+  <div class="ranking-overlay hidden" id="rankingOverlay">
+    <div class="screen-title" style="font-size:1.6rem;">🏆 ランキング</div>
+    <div class="ranking-tabs">
+      <button class="ranking-tab t-easy active" onclick="switchRankTab('easy')">🌱 かんたん</button>
+      <button class="ranking-tab t-normal" onclick="switchRankTab('normal')">⚡ ふつう</button>
+      <button class="ranking-tab t-hard" onclick="switchRankTab('hard')">🔥 むずかしい</button>
+    </div>
+    <div class="ranking-list" id="rankingList"></div>
+    <button class="btn" style="padding:10px 30px;font-size:1rem;" onclick="hideRanking()">もどる</button>
+  </div>
+  <div class="screen-overlay hidden" id="nameEntryOverlay" style="z-index:260;">
+    <div class="screen-title" style="font-size:1.8rem;">🎉 ランキング入り！</div>
+    <div id="nameEntryRankText" style="color:var(--gold);font-size:1.1rem;font-weight:900;"></div>
+    <div id="nameEntryScoreText" style="color:var(--text-dim);font-size:0.9rem;"></div>
+    <div style="color:var(--text-dim);font-size:0.95rem;margin-top:10px;">名前を記録する？</div>
+    <div class="name-entry-form">
+      <input class="name-input" id="nameEntryInput" type="text" placeholder="なまえ" maxlength="8">
+      <div class="grade-selector">
+        <button class="grade-btn" data-grade="小1" onclick="selectGrade(this)">小1</button>
+        <button class="grade-btn" data-grade="小2" onclick="selectGrade(this)">小2</button>
+        <button class="grade-btn" data-grade="小3" onclick="selectGrade(this)">小3</button>
+        <button class="grade-btn" data-grade="小4" onclick="selectGrade(this)">小4</button>
+        <button class="grade-btn" data-grade="小5" onclick="selectGrade(this)">小5</button>
+        <button class="grade-btn" data-grade="小6" onclick="selectGrade(this)">小6</button>
+        <button class="grade-btn" data-grade="中学" onclick="selectGrade(this)">中学</button>
+        <button class="grade-btn" data-grade="大人" onclick="selectGrade(this)">大人</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:6px;">
+      <button class="btn" style="padding:10px 28px;font-size:0.95rem;background:linear-gradient(135deg,#2a6b3a,#1e5a2e);border-color:#3a8b4a;" onclick="confirmNameEntry()">登録する！</button>
+      <button class="ranking-btn" style="margin-top:0;padding:10px 20px;" onclick="skipNameEntry()">スキップ</button>
+    </div>
+  </div>
+  <div class="header">
+    <div class="diff-badge" id="diffBadge">かんたん</div>
+    <div class="score-display"><span class="star">⭐</span><span id="scoreText">0</span></div>
+    <div class="combo-display" id="comboDisplay">🔥 x0</div>
+    <div style="font-size:0.8rem;color:var(--text-dim);" id="correctCount">正解: 0</div>
+    <button class="quit-btn" onclick="quitGame()">✕ やめる</button>
+  </div>
+  <div class="timer-area">
+    <div class="timer-bar-track"><div class="timer-bar-fill" id="timerBarFill" style="width:100%"></div></div>
+    <div class="timer-text" id="timerText">30.0</div>
+  </div>
+  <div class="play-area">
+    <div class="question-text" id="questionText">この的の分数は？🎯</div>
+    <div class="pie-wrapper">
+      <div class="pie-chart" id="pieChart"><canvas id="pieCanvas" width="400" height="400"></canvas></div>
+      <div class="shatter-container" id="shatterContainer"></div>
+      <div class="sparkle-burst" id="sparkleBurst"></div>
+    </div>
+  </div>
+  <div class="cards-area" id="cardsArea"></div>
+</div>
+<div class="result-popup" id="resultPopup"></div>
+<script>
+// ===================== STATE =====================
+const state = {
+  score:0, combo:0, maxCombo:0, totalCorrect:0, totalAttempts:0,
+  currentAnswer:null, isAnimating:false,
+  timeLeft:30.0, maxTime:30.0,
+  timerRAF:null, lastTimestamp:0, gameRunning:false,
+  questionStartTime:0,
+  mode:'easy', gameMode:'normal',
+  questionNum:0, totalQuestions:10,
+  totalElapsed:0,
+  lastCountdownNum:0,
+  questionTimer:null, // per-question countdown for gunman mode
+};
+
+let selectedGameMode = 'normal'; // tracks the tab on start screen
+
+// ===================== FRACTION POOLS =====================
+const easyPool = [
+  {n:1,d:2},
+  {n:1,d:3},{n:2,d:3},
+  {n:1,d:4},{n:3,d:4},
+  {n:1,d:5},{n:2,d:5},{n:3,d:5},{n:4,d:5},
+  {n:1,d:6},{n:5,d:6},
+];
+
+// Normal: max denominator 10
+const normalPool = [
+  {n:1,d:3},{n:2,d:3},
+  {n:1,d:4},{n:3,d:4},
+  {n:1,d:5},{n:2,d:5},{n:3,d:5},{n:4,d:5},
+  {n:1,d:6},{n:5,d:6},
+  {n:1,d:7},{n:2,d:7},{n:3,d:7},{n:4,d:7},{n:5,d:7},{n:6,d:7},
+  {n:1,d:8},{n:3,d:8},{n:5,d:8},{n:7,d:8},
+  {n:1,d:9},{n:2,d:9},{n:4,d:9},{n:5,d:9},{n:7,d:9},{n:8,d:9},
+  {n:1,d:10},{n:3,d:10},{n:7,d:10},{n:9,d:10},
+];
+
+const hardPool = [
+  {n:1,d:3},{n:2,d:6},{n:3,d:9},
+  {n:1,d:4},{n:2,d:8},{n:3,d:12},
+  {n:1,d:2},{n:2,d:4},{n:3,d:6},{n:4,d:8},{n:5,d:10},
+  {n:2,d:3},{n:4,d:6},{n:6,d:9},
+  {n:3,d:4},{n:6,d:8},{n:9,d:12},
+  {n:3,d:5},{n:6,d:10},
+  {n:1,d:7},{n:2,d:7},{n:3,d:7},{n:4,d:7},{n:5,d:7},{n:6,d:7},
+  {n:1,d:9},{n:2,d:9},{n:4,d:9},{n:5,d:9},{n:7,d:9},{n:8,d:9},
+  {n:3,d:16},{n:5,d:16},{n:7,d:16},{n:9,d:16},{n:11,d:16},{n:13,d:16},
+  {n:1,d:20},{n:3,d:20},{n:7,d:20},{n:9,d:20},{n:11,d:20},{n:13,d:20},{n:17,d:20},{n:19,d:20},
+];
+
+const PIE_COLORS = ['#c0392b','#d4a654','#e67e22','#27ae60','#f0c040','#8b5e3c','#e74c3c','#2ecc71','#d35400','#c8a060','#a0301f','#f39c12'];
+
+// ===================== HELPERS =====================
+function gcd(a,b){return b===0?a:gcd(b,a%b);}
+function simplify(n,d){const g=gcd(Math.abs(n),Math.abs(d));return{n:n/g,d:d/g};}
+function fractionsEqual(a,b){const sa=simplify(a.n,a.d),sb=simplify(b.n,b.d);return sa.n===sb.n&&sa.d===sb.d;}
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+function pickRandom(a){return a[Math.floor(Math.random()*a.length)];}
+function getPool(){return state.mode==='easy'?easyPool:state.mode==='normal'?normalPool:hardPool;}
+function getNumDummies(){return state.mode==='easy'?3:state.mode==='normal'?4:5;}
+
+// Speed config per game mode
+function getSpeed() {
+  if (state.gameMode === 'gunman') {
+    return { nextDelay: 450, pieEnter: '0.15s', cardStagger: 28, shardFly: '0.4s', shardClean: 500 };
+  } else {
+    return { nextDelay: 800, pieEnter: '0.3s', cardStagger: 50, shardFly: '0.7s', shardClean: 900 };
+  }
+}
+
+// ===================== WESTERN EFFECTS =====================
+function showBang() {
+  const el = document.createElement('div'); el.className = 'bang-effect';
+  const bangs = ['BANG!', 'BANG!!', 'POW!', 'BOOM!'];
+  el.innerHTML = `<div class="bang-text">${pickRandom(bangs)}💥</div>`;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 750);
+}
+
+function showTumbleweed() {
+  const el = document.createElement('div'); el.className = 'tumbleweed';
+  el.textContent = '🌿';
+  el.style.bottom = (10 + Math.random() * 30) + '%';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2000);
+}
+
+function getComboTitle(combo) {
+  if (combo >= 10) return '🤠 伝説のガンマン！';
+  if (combo >= 7) return '⭐ 保安官！';
+  if (combo >= 5) return '🔥 無法者！';
+  if (combo >= 3) return '💨 早撃ち！';
+  return '';
+}
+
+function getQuestionTimeLimit() {
+  return state.mode === 'easy' ? 2000 : state.mode === 'normal' ? 3000 : 4000;
+}
+
+function startQuestionTimer() {
+  clearQuestionTimer();
+  if (state.gameMode !== 'gunman') return;
+  state.questionTimer = setTimeout(() => questionTimeout(), getQuestionTimeLimit());
+}
+
+function clearQuestionTimer() {
+  if (state.questionTimer) { clearTimeout(state.questionTimer); state.questionTimer = null; }
+}
+
+function questionTimeout() {
+  if (!state.gameRunning || state.isAnimating) return;
+  state.isAnimating = true;
+  state.totalAttempts++;
+  state.combo = 0; updateCombo();
+  // -4 second penalty
+  subtractTime(4.0);
+  showDrawEffect();
+  showTumbleweed();
+  const pieEl = document.getElementById('pieChart'); pieEl.classList.add('shake');
+  setTimeout(() => {
+    pieEl.classList.remove('shake');
+    if (!state.gameRunning) { state.isAnimating = false; return; }
+    generateQuestion(); state.isAnimating = false;
+  }, 1200);
+}
+
+function showDrawEffect() {
+  const dim = document.createElement('div'); dim.className = 'draw-overlay';
+  document.body.appendChild(dim); setTimeout(() => dim.remove(), 1300);
+  const txt = document.createElement('div'); txt.className = 'draw-text';
+  txt.innerHTML = '<span>DRAW...<span class="draw-sub">🔫 抜けなかった… −4秒</span></span>';
+  document.body.appendChild(txt); setTimeout(() => txt.remove(), 1300);
+}
+
+function subtractTime(seconds) {
+  if (state.gameMode !== 'gunman') return;
+  state.timeLeft = Math.max(0, state.timeLeft - seconds);
+  updateBarUI();
+  const timerArea = document.querySelector('.timer-area');
+  const rect = timerArea.getBoundingClientRect();
+  const el = document.createElement('div'); el.className = 'time-penalty-float';
+  el.textContent = `−${seconds.toFixed(1)}秒`;
+  el.style.left = (rect.left + rect.width * 0.5) + 'px'; el.style.top = (rect.bottom + 5) + 'px';
+  document.body.appendChild(el); setTimeout(() => el.remove(), 1200);
+  if (state.timeLeft <= 0) endGame();
+}
+
+// ===================== MODE SWITCH (start screen) =====================
+function switchMode(mode) {
+  selectedGameMode = mode;
+  // Sync all mode tabs (start screen + game over screen)
+  document.getElementById('modeTabNormal').classList.toggle('active', mode==='normal');
+  document.getElementById('modeTabGunman').classList.toggle('active', mode==='gunman');
+  document.getElementById('modeTabNormal2').classList.toggle('active', mode==='normal');
+  document.getElementById('modeTabGunman2').classList.toggle('active', mode==='gunman');
+  document.getElementById('modeDesc').textContent = mode==='normal'
+    ? '10問チャレンジ！じっくり正確に答えよう'
+    : '30秒！速く正確にバシバシ撃ち抜け！💥';
+}
+
+// ===================== DRAW PIE =====================
+function drawPieChart(canvas, fraction) {
+  const ctx=canvas.getContext('2d');
+  const w=canvas.width,h=canvas.height,cx=w/2,cy=h/2,r=w/2-10;
+  ctx.clearRect(0,0,w,h);
+  const {n,d}=fraction;
+  const sSimp=simplify(n,d);
+  const sliceAngle=(2*Math.PI)/d;
+  const startOffset=-Math.PI/2;
+  for(let i=0;i<d;i++){
+    const start=startOffset+i*sliceAngle,end=start+sliceAngle;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();
+    ctx.fillStyle=i<n?PIE_COLORS[i%PIE_COLORS.length]:'rgba(255,255,255,0.07)';
+    ctx.fill();
+  }
+  ctx.strokeStyle='rgba(80,80,80,0.8)';ctx.lineWidth=2.5;
+  for(let i=0;i<d;i++){
+    const angle=startOffset+i*sliceAngle;
+    ctx.beginPath();ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+Math.cos(angle)*r,cy+Math.sin(angle)*r);ctx.stroke();
+  }
+  if(state.mode==='hard'&&d!==sSimp.d){
+    const simpSlice=(2*Math.PI)/sSimp.d;
+    ctx.setLineDash([6,4]);ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=1.5;
+    for(let i=0;i<sSimp.d;i++){
+      const angle=startOffset+i*simpSlice;
+      ctx.beginPath();ctx.moveTo(cx,cy);
+      ctx.lineTo(cx+Math.cos(angle)*r,cy+Math.sin(angle)*r);ctx.stroke();
+    }
+    ctx.setLineDash([]);
+  }
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
+  ctx.strokeStyle='rgba(80,80,80,0.8)';ctx.lineWidth=3;ctx.stroke();
+  const grad=ctx.createRadialGradient(cx-r*0.3,cy-r*0.3,0,cx,cy,r);
+  grad.addColorStop(0,'rgba(255,255,255,0.1)');grad.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fillStyle=grad;ctx.fill();
+}
+
+// ===================== SHATTER =====================
+function shatterPie(){
+  const container=document.getElementById('shatterContainer');
+  const canvas=document.getElementById('pieCanvas');
+  const pieEl=document.getElementById('pieChart');
+  const imgData=canvas.toDataURL();
+  pieEl.style.opacity='0';pieEl.style.transform='scale(0.7)';
+  const cw=210;
+  for(let i=0;i<10;i++){
+    const shard=document.createElement('div');shard.className='shard';
+    const angle=(i/10)*Math.PI*2,dist=60+Math.random()*100;
+    const tx=Math.cos(angle)*dist,ty=Math.sin(angle)*dist;
+    const rot=(Math.random()-0.5)*720,size=22+Math.random()*35;
+    const half=cw/2;
+    const ox=half+Math.cos(angle)*30-size/2,oy=half+Math.sin(angle)*30-size/2;
+    const pts=[];for(let j=0;j<4+Math.floor(Math.random()*3);j++)pts.push(`${Math.random()*100}% ${Math.random()*100}%`);
+    shard.style.cssText=`left:${ox}px;top:${oy}px;width:${size}px;height:${size}px;background-image:url(${imgData});background-size:${cw}px ${cw}px;background-position:-${ox}px -${oy}px;clip-path:polygon(${pts.join(',')});--tx:${tx}px;--ty:${ty}px;--rot:${rot}deg;animation:shard-fly ${getSpeed().shardFly} ease-out forwards;`;
+    container.appendChild(shard);
+  }
+  spawnSparkles();
+  setTimeout(()=>{container.innerHTML='';},getSpeed().shardClean);
+}
+function spawnSparkles(){
+  const burst=document.getElementById('sparkleBurst');
+  const colors=['#f0c040','#c0392b','#d4a654','#fff','#e8a020'];
+  for(let i=0;i<16;i++){
+    const s=document.createElement('div');s.className='sparkle';
+    const angle=Math.random()*Math.PI*2,dist=40+Math.random()*80;
+    s.style.cssText=`--sx:${Math.cos(angle)*dist}px;--sy:${Math.sin(angle)*dist}px;background:${pickRandom(colors)};width:${3+Math.random()*5}px;height:${3+Math.random()*5}px;animation-duration:${0.4+Math.random()*0.4}s;`;
+    burst.appendChild(s);
+  }
+  setTimeout(()=>{burst.innerHTML='';},1000);
+}
+
+// ===================== TIMER (gunman mode) =====================
+function startTimer(){
+  state.lastTimestamp=performance.now();
+  function tick(now){
+    if(!state.gameRunning)return;
+    const delta=(now-state.lastTimestamp)/1000;
+    state.lastTimestamp=now;
+    state.timeLeft=Math.max(0,state.timeLeft-delta);
+    updateBarUI();
+    if(state.timeLeft<=5&&state.timeLeft>0){
+      const cn=Math.ceil(state.timeLeft);
+      if(cn!==state.lastCountdownNum&&cn>=1&&cn<=5){state.lastCountdownNum=cn;showCountdown(cn);}
+    }
+    if(state.timeLeft<=0){endGame();return;}
+    state.timerRAF=requestAnimationFrame(tick);
+  }
+  state.timerRAF=requestAnimationFrame(tick);
+}
+
+// ===================== BAR UI =====================
+function updateBarUI(){
+  const fill=document.getElementById('timerBarFill');
+  const text=document.getElementById('timerText');
+  if(state.gameMode==='gunman'){
+    const pct=(state.timeLeft/state.maxTime)*100;
+    fill.style.width=pct+'%';
+    fill.classList.remove('progress');
+    const danger=state.timeLeft<=8;
+    fill.classList.toggle('danger',danger);
+    text.classList.toggle('danger',danger);
+    text.textContent=state.timeLeft.toFixed(1);
+  } else {
+    // Normal mode: show question progress
+    const pct=(state.questionNum/state.totalQuestions)*100;
+    fill.style.width=pct+'%';
+    fill.classList.remove('danger');
+    fill.classList.add('progress');
+    text.classList.remove('danger');
+    text.textContent=`${state.questionNum}/${state.totalQuestions}`;
+  }
+}
+
+function addTime(seconds){
+  if(state.gameMode!=='gunman')return;
+  state.timeLeft=Math.min(state.timeLeft+seconds,state.maxTime);
+  updateBarUI();
+  const timerArea=document.querySelector('.timer-area');
+  const rect=timerArea.getBoundingClientRect();
+  const el=document.createElement('div');el.className='time-bonus-float';
+  el.textContent=`+${seconds.toFixed(1)}秒`;
+  el.style.left=(rect.left+rect.width*0.5)+'px';el.style.top=(rect.bottom+5)+'px';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),1000);
+}
+
+// ===================== COUNTDOWN =====================
+function showCountdown(num){
+  const el=document.createElement('div');el.className='countdown-num';el.textContent=num;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),950);
+  const flash=document.createElement('div');flash.className='screen-flash';
+  document.body.appendChild(flash);setTimeout(()=>flash.remove(),350);
+  const tt=document.getElementById('timerText');tt.classList.remove('countdown-pulse');
+  void tt.offsetWidth;tt.classList.add('countdown-pulse');
+  setTimeout(()=>tt.classList.remove('countdown-pulse'),450);
+}
+
+// ===================== UI =====================
+function updateScore(){document.getElementById('scoreText').textContent=state.score;}
+function updateCombo(){
+  const el=document.getElementById('comboDisplay');
+  if(state.combo>=2){el.textContent=`🔥 x${state.combo}`;el.classList.remove('active');void el.offsetWidth;el.classList.add('active');}
+  else{el.classList.remove('active');}
+}
+function updateCorrectCount(){document.getElementById('correctCount').textContent=`正解: ${state.totalCorrect}`;}
+function showPopup(t,c){const el=document.getElementById('resultPopup');el.textContent=t;el.className='result-popup '+c;void el.offsetWidth;el.className='result-popup '+c;}
+
+// ===================== GENERATE QUESTION =====================
+function generateQuestion(){
+  const pool=getPool();const numDummies=getNumDummies();
+  const answer=pickRandom(pool);state.currentAnswer=answer;state.questionStartTime=Date.now();
+  const dummies=[];let attempts=0;
+  while(dummies.length<numDummies&&attempts<200){attempts++;const c=pickRandom(pool);if(!fractionsEqual(c,answer)&&!dummies.some(d=>fractionsEqual(d,c)))dummies.push(c);}
+  const allPools=[...easyPool,...normalPool,...hardPool];
+  while(dummies.length<numDummies){const c=pickRandom(allPools);if(!fractionsEqual(c,answer)&&!dummies.some(d=>fractionsEqual(d,c)))dummies.push(c);}
+  const options=shuffle([answer,...dummies]);
+  const canvas=document.getElementById('pieCanvas');
+  const pieEl=document.getElementById('pieChart');
+  pieEl.style.opacity='1';pieEl.style.transform='scale(1)';
+  pieEl.classList.remove('entering');void pieEl.offsetWidth;
+  pieEl.style.animationDuration=getSpeed().pieEnter;
+  pieEl.classList.add('entering');
+  drawPieChart(canvas,answer);
+  const cardsArea=document.getElementById('cardsArea');cardsArea.innerHTML='';
+  options.forEach((frac,idx)=>{
+    const card=document.createElement('div');card.className='fraction-card';
+    card.innerHTML=`<span class="numerator">${frac.n}</span><div class="fraction-bar"></div><span class="denominator">${frac.d}</span>`;
+    card.addEventListener('click',(e)=>{e.preventDefault();confirmAnswer(frac,card);});
+    card.addEventListener('touchend',(e)=>{e.preventDefault();confirmAnswer(frac,card);});
+    cardsArea.appendChild(card);
+    card.style.opacity='0';card.style.transform='translateY(16px)';
+    setTimeout(()=>{card.style.transition='opacity 0.2s ease,transform 0.2s ease,box-shadow 0.2s,border-color 0.2s,background 0.2s';card.style.opacity='1';card.style.transform='translateY(0)';},30+idx*getSpeed().cardStagger);
+  });
+  const texts=state.mode==='hard'
+    ?['約分に注意して撃て！🤠','同じ大きさの分数を見つけろ！','正しい分数を撃ち抜け！']
+    :['この的の分数は？🎯','色のついた部分を撃て！','撃ち抜け！🔫'];
+  document.getElementById('questionText').textContent=pickRandom(texts);
+  startQuestionTimer();
+}
+
+// ===================== CONFIRM ANSWER =====================
+function confirmAnswer(frac,card){
+  if(state.isAnimating||!state.gameRunning)return;
+  clearQuestionTimer();
+  state.isAnimating=true;state.totalAttempts++;
+  if(fractionsEqual(frac,state.currentAnswer)){
+    state.combo++;if(state.combo>state.maxCombo)state.maxCombo=state.combo;
+    state.totalCorrect++;
+    const points=100*Math.max(1,state.combo);state.score+=points;
+    updateScore();updateCombo();updateCorrectCount();shatterPie();showBang();
+    const elapsed=(Date.now()-state.questionStartTime)/1000;
+    state.totalElapsed+=elapsed;
+    // Gunman mode time bonus (hell settings, hard has special bonus)
+    if(state.gameMode==='gunman'){
+      let tb=0;
+      if(state.mode==='hard'){
+        if(elapsed<1)tb=1.0;if(state.combo>=3)tb+=0.5;
+      } else {
+        if(elapsed<1)tb=0.3;if(state.combo>=10)tb+=0.3;
+      }
+      if(tb>0)addTime(tb);
+    }
+    const comboTitle = getComboTitle(state.combo);
+    const popupText = comboTitle ? `${comboTitle} x${state.combo} +${points}点`
+      : state.combo>=2 ? `💨 早撃ち！ +${points}点` : '💥 命中！';
+    showPopup(popupText,'correct');
+    setTimeout(()=>{
+      if(!state.gameRunning)return;
+      if(state.gameMode==='normal'){
+        state.questionNum++;updateBarUI();
+        if(state.questionNum>=state.totalQuestions){endGame();state.isAnimating=false;return;}
+      }
+      generateQuestion();state.isAnimating=false;
+    },getSpeed().nextDelay);
+  } else {
+    state.combo=0;updateCombo();
+    const pieEl=document.getElementById('pieChart');pieEl.classList.add('shake');
+    card.classList.add('disabled');showPopup('💨 ハズレ！','wrong');showTumbleweed();
+    if(state.gameMode==='gunman')subtractTime(2.0);
+    setTimeout(()=>{pieEl.classList.remove('shake');state.isAnimating=false;},450);
+  }
+}
+
+// ===================== GAME FLOW =====================
+function startGame(mode){
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('gameOverScreen').classList.add('hidden');
+  document.getElementById('rankingOverlay').classList.add('hidden');
+  document.getElementById('nameEntryOverlay').classList.add('hidden');
+
+  state.mode=mode;
+  state.gameMode=selectedGameMode;
+  Object.assign(state,{
+    score:0,combo:0,maxCombo:0,totalCorrect:0,totalAttempts:0,
+    isAnimating:false,timeLeft:30.0,gameRunning:true,
+    lastCountdownNum:0,questionNum:0,totalElapsed:0,
+  });
+
+  const badge=document.getElementById('diffBadge');
+  badge.className='diff-badge '+mode;
+  badge.textContent=(mode==='easy'?'🌱 かんたん':mode==='normal'?'⚡ ふつう':'🔥 むずかしい');
+
+  updateScore();updateCombo();updateCorrectCount();updateBarUI();
+  if(state.timerRAF)cancelAnimationFrame(state.timerRAF);
+  if(state.gameMode==='gunman')startTimer();
+  generateQuestion();
+}
+
+function endGame(){
+  state.gameRunning=false;
+  clearQuestionTimer();
+  if(state.timerRAF)cancelAnimationFrame(state.timerRAF);
+  setTimeout(()=>{
+    document.getElementById('finalScore').textContent=state.score;
+    document.getElementById('finalCorrect').textContent=state.totalCorrect;
+    document.getElementById('finalCombo').textContent=state.maxCombo;
+    const acc=state.totalAttempts>0?Math.round((state.totalCorrect/state.totalAttempts)*100):0;
+    document.getElementById('finalAccuracy').textContent=acc+'%';
+    // Show total time in normal mode
+    const timeRow=document.getElementById('finalTimeRow');
+    if(state.gameMode==='normal'){
+      timeRow.style.display='';
+      document.getElementById('finalTime').textContent=state.totalElapsed.toFixed(1)+'秒';
+    } else {
+      timeRow.style.display='none';
+    }
+    const title=state.totalCorrect>=20?'🤠 伝説のガンマン！':state.totalCorrect>=12?'🌟 凄腕ガンマン！':state.totalCorrect>=6?'🌵 いい腕だ！':'🏜️ 日が暮れた！';
+    document.getElementById('gameOverTitle').textContent=title;
+    document.getElementById('gameOverScreen').classList.remove('hidden');
+    if(qualifiesForRanking(state.mode,state.score)){
+      setTimeout(()=>showNameEntry(state.mode,state.score,state.totalCorrect,state.maxCombo),600);
+    }
+  },500);
+}
+
+function quitGame(){endGame();}
+
+// ===================== RANKING =====================
+const MAX_RANKING=7;
+let rankings={easy:[],normal:[],hard:[]};
+let currentRankTab='easy';let lastNewEntryId=null;let pendingEntry=null;let selectedGrade='';
+
+async function loadRankings(){try{const r=await window.storage.get('fraction-gunman-rankings');if(r&&r.value)rankings=JSON.parse(r.value);}catch(e){rankings={easy:[],normal:[],hard:[]};}}
+async function saveRankings(){try{await window.storage.set('fraction-gunman-rankings',JSON.stringify(rankings));}catch(e){}}
+
+function qualifiesForRanking(mode,score){
+  if(score<=0)return false;const list=rankings[mode]||[];
+  if(list.length<MAX_RANKING)return true;return score>list[list.length-1].score;
+}
+function getRankPosition(mode,score){const list=rankings[mode]||[];for(let i=0;i<list.length;i++){if(score>list[i].score)return i+1;}return list.length+1;}
+function insertToRanking(mode,name,grade,score,correct,maxCombo){
+  if(!rankings[mode])rankings[mode]=[];const id=Date.now().toString();
+  rankings[mode].push({id,name,grade,score,correct,maxCombo});
+  rankings[mode].sort((a,b)=>b.score-a.score);rankings[mode]=rankings[mode].slice(0,MAX_RANKING);
+  lastNewEntryId=rankings[mode].find(e=>e.id===id)?id:null;saveRankings();
+}
+function showNameEntry(mode,score,correct,maxCombo){
+  const rank=getRankPosition(mode,score);
+  const medals=['👑','🥈','🥉'];const rl=rank<=3?medals[rank-1]+' '+rank+'位':rank+'位';
+  document.getElementById('nameEntryRankText').textContent=rl+' にランクイン！';
+  document.getElementById('nameEntryScoreText').textContent=`スコア: ${score}　正解: ${correct}問`;
+  document.getElementById('nameEntryInput').value='';
+  document.querySelectorAll('.grade-btn').forEach(b=>b.classList.remove('selected'));selectedGrade='';
+  pendingEntry={mode,score,correct,maxCombo};
+  document.getElementById('nameEntryOverlay').classList.remove('hidden');
+  setTimeout(()=>document.getElementById('nameEntryInput').focus(),100);
+}
+function selectGrade(btn){document.querySelectorAll('.grade-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');selectedGrade=btn.dataset.grade;}
+function confirmNameEntry(){
+  if(!pendingEntry)return;
+  const name=(document.getElementById('nameEntryInput').value||'').trim()||'名無し';
+  const{mode,score,correct,maxCombo}=pendingEntry;
+  insertToRanking(mode,name,selectedGrade,score,correct,maxCombo);
+  pendingEntry=null;document.getElementById('nameEntryOverlay').classList.add('hidden');showRanking(mode);
+}
+function skipNameEntry(){pendingEntry=null;lastNewEntryId=null;document.getElementById('nameEntryOverlay').classList.add('hidden');}
+
+function renderRankingList(mode){
+  const list=document.getElementById('rankingList');const entries=rankings[mode]||[];
+  if(!entries.length){list.innerHTML='<div class="ranking-empty">まだ記録がないよ！</div>';return;}
+  list.innerHTML=entries.map((e,i)=>{
+    const rc=i===0?'r1':i===1?'r2':i===2?'r3':'';
+    const medals=['👑','🥈','🥉'];const rl=i<3?medals[i]:(i+1);
+    const isNew=e.id===lastNewEntryId;
+    const gt=e.grade?`<span class="ranking-grade">${e.grade}</span>`:'';
+    return `<div class="ranking-entry ${isNew?'highlight':''}"><div class="ranking-rank ${rc}">${rl}</div><div class="ranking-name">${e.name} ${gt}${isNew?'<span class="new-record-badge"> NEW!</span>':''}</div><div style="text-align:right"><div class="ranking-score">${e.score}</div><div class="ranking-detail">${e.correct}問 / コンボ${e.maxCombo}</div></div></div>`;
+  }).join('');
+}
+function switchRankTab(mode){
+  currentRankTab=mode;document.querySelectorAll('.ranking-tab').forEach(t=>t.classList.remove('active'));
+  const tabs=document.querySelectorAll('.ranking-tab');const idx=mode==='easy'?0:mode==='normal'?1:2;
+  tabs[idx].classList.add('active');renderRankingList(mode);
+}
+function showRanking(focusMode){
+  if(focusMode){currentRankTab=focusMode;document.querySelectorAll('.ranking-tab').forEach(t=>t.classList.remove('active'));const tabs=document.querySelectorAll('.ranking-tab');const idx=focusMode==='easy'?0:focusMode==='normal'?1:2;tabs[idx].classList.add('active');}
+  renderRankingList(currentRankTab);document.getElementById('rankingOverlay').classList.remove('hidden');
+}
+function hideRanking(){document.getElementById('rankingOverlay').classList.add('hidden');lastNewEntryId=null;}
+
+loadRankings();
+
+// ===================== BG =====================
+(function(){
+  const c=document.getElementById('bgParticles');const colors=['#d4a654','#8b5e3c','#f0c040','#c8a060','#6b3a1f'];
+  for(let i=0;i<18;i++){const p=document.createElement('div');p.className='bg-particle';const size=4+Math.random()*18;
+  p.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${size}px;height:${size}px;background:${pickRandom(colors)};animation-delay:${Math.random()*5}s;animation-duration:${5+Math.random()*8}s;`;c.appendChild(p);}
+})();
+</script>
+</body>
+</html>
