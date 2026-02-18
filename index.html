@@ -357,6 +357,7 @@
       <button class="diff-btn normal" onclick="startGame('normal')">⚡ ふつう</button>
       <button class="diff-btn hard" onclick="startGame('hard')">🔥 むずかしい</button>
     </div>
+    <button class="btn" style="margin-top:10px;padding:10px 30px;font-size:1rem;" onclick="goHome()">🏠 HOME にもどる</button>
   </div>
   <div class="ranking-overlay hidden" id="rankingOverlay">
     <div class="screen-title" style="font-size:1.6rem;">🏆 🔫 ガンマンランキング</div>
@@ -989,6 +990,12 @@ function endGame(){
 }
 
 function quitGame(){endGame();}
+
+function goHome(){
+  document.getElementById('gameOverScreen').classList.add('hidden');
+  document.getElementById('startScreen').classList.remove('hidden');
+  setAltBadgeVisible(true);
+}
 
 // ===================== RANKING (weekly + alltime, mode x difficulty) =====================
 const MAX_RANKING=7;
