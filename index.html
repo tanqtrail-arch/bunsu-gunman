@@ -53,6 +53,8 @@
   @keyframes sparkle-fly{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--sx),var(--sy)) scale(0)}}
   @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
   .pie-chart.shake{animation:shake 0.4s ease;}
+  .gray-flash{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:170;animation:flash-gray 0.4s ease-out forwards;}
+  @keyframes flash-gray{0%{background:rgba(150,150,150,0.35)}100%{background:rgba(150,150,150,0)}}
   .pie-chart.entering{animation:pie-enter 0.2s ease-out;}
   @keyframes pie-enter{0%{transform:scale(0.3) rotate(-20deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
   .cards-area{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;z-index:10;padding:6px 16px 24px;width:100%;max-width:700px;}
@@ -103,15 +105,23 @@
   @keyframes ranking-glow{0%{box-shadow:0 0 10px rgba(240,192,64,0.08)}100%{box-shadow:0 0 20px rgba(240,192,64,0.2)}}
   .ranking-btn{background:none;border:2px solid rgba(200,160,96,0.2);color:var(--text-dim);padding:7px 18px;border-radius:10px;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;transition:all 0.2s;}
   .ranking-btn:hover{border-color:var(--gold);color:var(--gold);}
-  .ranking-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,8,2,0.96);backdrop-filter:blur(10px);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:250;gap:14px;}
+  .ranking-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,8,2,0.96);backdrop-filter:blur(10px);display:flex;flex-direction:column;align-items:center;z-index:250;gap:8px;overflow-y:auto;padding:20px 0;}
   .ranking-overlay.hidden{display:none;}
+  .ranking-period-tabs{display:flex;gap:0;border-radius:10px;overflow:hidden;border:2px solid rgba(200,160,96,0.2);margin-bottom:2px;}
+  .ranking-period-tab{padding:8px 20px;font-size:0.8rem;font-weight:900;cursor:pointer;border:none;font-family:'Zen Maru Gothic',sans-serif;transition:all 0.2s;background:rgba(200,160,96,0.05);color:var(--text-dim);}
+  .ranking-period-tab.active.t-weekly{color:#ff9040;background:linear-gradient(135deg,rgba(255,144,64,0.2),rgba(192,57,43,0.15));border-color:rgba(255,144,64,0.3);}
+  .ranking-period-tab.active.t-alltime{color:var(--gold);background:linear-gradient(135deg,rgba(240,192,64,0.2),rgba(200,160,96,0.15));border-color:rgba(240,192,64,0.3);}
+  .ranking-mode-tabs{display:flex;gap:0;border-radius:10px;overflow:hidden;border:2px solid rgba(200,160,96,0.15);}
+  .ranking-mode-tab{padding:6px 20px;font-size:0.8rem;font-weight:900;cursor:pointer;border:none;font-family:'Zen Maru Gothic',sans-serif;transition:all 0.2s;background:rgba(200,160,96,0.05);color:var(--text-dim);}
+  .ranking-mode-tab.active{color:var(--text);background:linear-gradient(135deg,var(--leather),#6b4a2a);}
   .ranking-tabs{display:flex;gap:8px;}
-  .ranking-tab{padding:6px 16px;border-radius:8px;border:1px solid rgba(200,160,96,0.15);font-size:0.8rem;font-weight:900;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;background:rgba(200,160,96,0.05);color:var(--text-dim);transition:all 0.2s;}
+  .ranking-tab{padding:6px 18px;border-radius:8px;border:1px solid rgba(200,160,96,0.15);font-size:0.9rem;font-weight:900;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;background:rgba(200,160,96,0.05);color:var(--text-dim);transition:all 0.2s;}
   .ranking-tab.active{color:var(--text);}
   .ranking-tab.active.t-easy{background:rgba(39,174,96,0.25);border-color:rgba(39,174,96,0.4);color:#7ddf90;}
   .ranking-tab.active.t-normal{background:rgba(240,192,64,0.2);border-color:rgba(240,192,64,0.4);color:var(--gold);}
   .ranking-tab.active.t-hard{background:rgba(192,57,43,0.25);border-color:rgba(192,57,43,0.4);color:#ff8070;}
-  .ranking-list{width:300px;max-width:90vw;}
+  .ranking-reset-info{font-size:0.65rem;color:var(--text-dim);opacity:0.6;text-align:center;}
+  .ranking-list{width:320px;max-width:90vw;}
   .ranking-entry{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;margin-bottom:5px;background:rgba(200,160,96,0.04);border:1px solid rgba(200,160,96,0.08);}
   .ranking-entry.highlight{background:rgba(240,192,64,0.1);border-color:rgba(240,192,64,0.3);}
   .ranking-rank{font-size:1.2rem;font-weight:900;min-width:32px;text-align:center;}
@@ -123,8 +133,109 @@
   .ranking-grade{font-size:0.6rem;padding:1px 6px;border-radius:6px;background:rgba(200,160,96,0.1);color:var(--text-dim);margin-left:4px;vertical-align:middle;}
   .new-record-badge{color:var(--gold);font-size:0.9rem;font-weight:700;animation:nr-glow 1s ease-in-out infinite alternate;}
   @keyframes nr-glow{0%{text-shadow:0 0 5px rgba(240,192,64,0.3)}100%{text-shadow:0 0 15px rgba(240,192,64,0.7)}}
+  .ranking-date{font-size:0.55rem;color:rgba(200,160,96,0.35);margin-top:1px;}
+  .ranking-arrow{font-size:0.7rem;margin-left:3px;}
+  .ranking-arrow.up{color:var(--success);}
+  .ranking-arrow.down{color:var(--accent);}
+  .ranking-arrow.same{color:var(--text-dim);opacity:0.4;}
+  .ranking-best{font-size:0.8rem;color:var(--text-dim);padding:4px 0;text-align:center;}
+  .ranking-gap{font-size:0.75rem;color:var(--text-dim);text-align:center;padding:2px 0;}
+  /* Mini ranking in result */
+  .mini-ranking{width:280px;max-width:90vw;margin:4px 0;}
+  .mini-ranking-title{font-size:0.75rem;font-weight:900;color:var(--sand);text-align:center;margin-bottom:4px;}
+  .mini-entry{display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:6px;font-size:0.8rem;background:rgba(200,160,96,0.04);border:1px solid rgba(200,160,96,0.06);margin-bottom:3px;}
+  .mini-entry.highlight{background:rgba(240,192,64,0.1);border-color:rgba(240,192,64,0.3);}
+  .mini-rank{font-weight:900;min-width:24px;text-align:center;}
+  .mini-rank.r1{color:var(--gold);} .mini-rank.r2{color:#c0c0c0;} .mini-rank.r3{color:#cd7f32;}
+  .mini-name{flex:1;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .mini-score{font-weight:900;color:var(--gold);}
   @media(max-width:500px){.pie-wrapper{width:170px;height:170px;}.pie-chart{width:155px;height:155px;}.fraction-card{padding:8px 12px;min-width:56px;}.fraction-card .numerator,.fraction-card .denominator{font-size:1.2rem;}.screen-title{font-size:1.7rem;}.diff-btn{min-width:90px;padding:12px 20px;}.mode-tab{padding:8px 20px;font-size:0.85rem;}}
   @media(max-height:650px){.pie-wrapper{width:150px;height:150px;}.pie-chart{width:135px;height:135px;}.play-area{gap:6px;}.cards-area{padding-bottom:12px;gap:8px;}}
+
+  /* Tablet (768px+) */
+  @media(min-width:768px){
+    .header{max-width:900px;padding:16px 32px 6px;gap:12px;}
+    .diff-badge{font-size:0.8rem;padding:4px 16px;}
+    .score-display{font-size:1.3rem;} .score-display .star{font-size:1.4rem;}
+    .combo-display{font-size:1rem;}
+    .quit-btn{font-size:0.75rem;padding:5px 14px;}
+    .timer-area{max-width:900px;padding:6px 32px;}
+    .timer-bar-track{height:16px;border-radius:8px;}
+    .timer-text{font-size:1.4rem;min-width:64px;}
+    .play-area{max-width:900px;gap:18px;}
+    .question-text{font-size:1.25rem;}
+    .pie-wrapper{width:280px;height:280px;}
+    .pie-chart{width:260px;height:260px;border-width:4px;}
+    .shatter-container{width:280px;height:280px;}
+    .cards-area{max-width:900px;gap:14px;padding:10px 32px 32px;}
+    .fraction-card{padding:14px 22px;min-width:80px;border-radius:12px;border-width:3px;}
+    .fraction-card .numerator,.fraction-card .denominator{font-size:1.8rem;}
+    .fraction-card .fraction-bar{width:40px;height:4px;margin:4px 0;}
+    .screen-overlay{gap:18px;}
+    .screen-title{font-size:2.8rem;}
+    .screen-subtitle{font-size:1.1rem;max-width:480px;}
+    .mode-tabs{border-radius:14px;}
+    .mode-tab{padding:14px 36px;font-size:1.1rem;}
+    .mode-desc{font-size:0.9rem;max-width:420px;}
+    .diff-buttons{gap:16px;margin-top:10px;}
+    .diff-btn{padding:18px 34px;border-radius:14px;min-width:140px;}
+    .diff-btn .diff-label{font-size:1.3rem;}
+    .diff-btn .diff-desc{font-size:0.75rem;}
+    .btn{padding:16px 48px;font-size:1.25rem;border-radius:14px;}
+    .ranking-btn-big{padding:14px 34px;font-size:1.1rem;border-radius:14px;}
+    .ranking-btn{padding:9px 22px;font-size:0.9rem;}
+    .final-stats{gap:36px;margin:10px 0;}
+    .stat-value{font-size:2.2rem;}
+    .stat-label{font-size:0.85rem;}
+    .ranking-list{width:400px;}
+    .ranking-entry{padding:12px 18px;border-radius:10px;margin-bottom:6px;}
+    .ranking-rank{font-size:1.4rem;min-width:40px;}
+    .ranking-name{font-size:1rem;}
+    .ranking-score{font-size:1.2rem;}
+    .ranking-detail{font-size:0.75rem;}
+    .ranking-tabs{gap:10px;}
+    .ranking-tab{padding:8px 20px;font-size:0.9rem;}
+    .name-input{width:220px;font-size:1.1rem;padding:10px 16px;}
+    .grade-selector{gap:8px;}
+    .grade-btn{padding:7px 16px;font-size:0.85rem;}
+    .result-popup{font-size:2.5rem;}
+    .bang-text{font-size:5rem;}
+    .draw-text span{font-size:3.5rem;}
+    .draw-text .draw-sub{font-size:1.1rem;}
+    .countdown-num{font-size:10rem;}
+    .alt-badge-fixed{font-size:1.1rem;padding:8px 18px;border-radius:14px;top:16px;right:20px;}
+    .alt-badge-fixed .alt-icon{font-size:1.3rem;}
+    .alt-result{gap:4px;margin:8px 0;}
+    .alt-earned{font-size:1.7rem;}
+    .alt-stars{font-size:1.8rem;letter-spacing:6px;}
+    .alt-breakdown{font-size:0.8rem;}
+    .alt-total{font-size:1rem;}
+    .line-report-section{max-width:420px;padding:18px;}
+    .line-report-title{font-size:1rem;}
+    .line-name-input{font-size:1rem;padding:9px 14px;}
+    .line-report-btn{font-size:1.05rem;padding:12px;}
+    .desert-silhouette{height:160px;}
+    .time-bonus-float{font-size:1.4rem;}
+    .time-penalty-float{font-size:1.5rem;}
+    .alt-float{font-size:1.4rem;}
+    .tumbleweed{font-size:3.2rem;}
+  }
+
+  /* Large tablet / landscape (1024px+) */
+  @media(min-width:1024px){
+    .header{max-width:1000px;}
+    .timer-area{max-width:1000px;}
+    .play-area{max-width:1000px;}
+    .cards-area{max-width:1000px;gap:16px;}
+    .pie-wrapper{width:320px;height:320px;}
+    .pie-chart{width:300px;height:300px;}
+    .shatter-container{width:320px;height:320px;}
+    .fraction-card{padding:16px 26px;min-width:90px;}
+    .fraction-card .numerator,.fraction-card .denominator{font-size:2rem;}
+    .fraction-card .fraction-bar{width:46px;}
+    .screen-title{font-size:3.2rem;}
+    .ranking-list{width:460px;}
+  }
 
   /* Desert silhouette decoration */
   .desert-silhouette{position:fixed;bottom:0;left:0;width:100%;height:120px;pointer-events:none;z-index:1;opacity:0.12;}
@@ -150,6 +261,41 @@
   /* Time penalty float */
   .time-penalty-float{position:fixed;font-size:1.3rem;font-weight:900;color:var(--accent);pointer-events:none;z-index:200;animation:time-penalty-up 1.2s ease-out forwards;text-shadow:0 0 10px rgba(192,57,43,0.7);}
   @keyframes time-penalty-up{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-50px) scale(1.3)}}
+
+  /* ALT badge (home screen, fixed top-right) */
+  .alt-badge-fixed{position:fixed;top:12px;right:16px;z-index:300;display:flex;align-items:center;gap:5px;background:rgba(15,8,2,0.85);border:2px solid var(--gold);border-radius:12px;padding:6px 14px;font-size:0.95rem;font-weight:900;color:var(--gold);backdrop-filter:blur(6px);box-shadow:0 2px 12px rgba(240,192,64,0.15);}
+  .alt-badge-fixed.hidden{display:none;}
+  .alt-badge-fixed .alt-icon{font-size:1.1rem;}
+  .alt-badge-fixed .alt-unit{font-size:0.65rem;color:var(--text-dim);margin-left:2px;}
+
+  /* ALT float (correct answer) */
+  .alt-float{position:fixed;font-size:1.2rem;font-weight:900;color:var(--success);pointer-events:none;z-index:200;animation:alt-float-up 0.9s ease-out forwards;text-shadow:0 0 10px rgba(39,174,96,0.6);}
+  @keyframes alt-float-up{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-45px) scale(1.3)}}
+
+  /* ALT result on game over */
+  .alt-result{display:flex;flex-direction:column;align-items:center;gap:2px;margin:4px 0;}
+  .alt-earned{font-size:1.4rem;font-weight:900;color:var(--success);}
+  .alt-breakdown{font-size:0.7rem;color:var(--text-dim);}
+  .alt-stars{font-size:1.5rem;letter-spacing:4px;}
+  .alt-total{font-size:0.85rem;color:var(--text-dim);}
+  .alt-first-clear{color:var(--gold);font-size:0.85rem;font-weight:900;animation:nr-glow 1s ease-in-out infinite alternate;}
+
+  /* LINE report section */
+  .line-report-section{width:100%;max-width:340px;margin-top:12px;padding:14px;border-radius:12px;background:rgba(200,160,96,0.06);border:1px solid rgba(200,160,96,0.15);}
+  .line-report-title{font-size:0.85rem;font-weight:900;color:var(--sand);margin-bottom:8px;text-align:center;}
+  .line-name-input{width:100%;background:rgba(200,160,96,0.08);border:2px solid rgba(200,160,96,0.2);border-radius:8px;padding:7px 12px;font-size:0.9rem;font-family:'Zen Maru Gothic',sans-serif;color:var(--text);outline:none;text-align:center;margin-bottom:8px;}
+  .line-name-input:focus{border-color:var(--gold);}
+  .line-name-input::placeholder{color:rgba(200,160,96,0.3);}
+  .line-report-btn{width:100%;padding:10px;border-radius:10px;border:2px solid #06c755;background:linear-gradient(135deg,#06c755,#04a847);color:#fff;font-size:0.95rem;font-weight:900;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;transition:all 0.2s;}
+  .line-report-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 4px 15px rgba(6,199,85,0.3);}
+  .line-report-btn:disabled{opacity:0.3;cursor:not-allowed;filter:grayscale(0.8);}
+
+  /* LINE confirm overlay */
+  .line-confirm-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(10,5,0,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:400;gap:12px;backdrop-filter:blur(8px);}
+  .line-confirm-overlay.hidden{display:none;}
+  .line-confirm-text{font-size:1rem;font-weight:700;color:var(--text);text-align:center;line-height:1.6;}
+  .line-confirm-alt{font-size:1.8rem;font-weight:900;color:var(--gold);}
+  .line-confirm-btns{display:flex;gap:12px;}
 </style>
 </head>
 <body>
@@ -171,8 +317,16 @@
       <button class="diff-btn normal" onclick="startGame('normal')"><span class="diff-label">⚡ ふつう</span><span class="diff-desc">2/5, 3/8, 7/10 など</span></button>
       <button class="diff-btn hard" onclick="startGame('hard')"><span class="diff-label">🔥 むずかしい</span><span class="diff-desc">7/16, 11/20, 約分も</span></button>
     </div>
-    <button class="ranking-btn-big" onclick="showRanking()">🏆 ランキングを見る</button>
+    <button class="ranking-btn-big" onclick="showRanking()">🏆 🔫 ガンマンランキング</button>
+    <!-- LINE Report Section -->
+    <div class="line-report-section">
+      <div class="line-report-title">💰 ALTをTRAILに報告する</div>
+      <input class="line-name-input" id="lineNameInput" type="text" placeholder="なまえを入力" maxlength="12">
+      <button class="line-report-btn" id="lineReportBtn" disabled onclick="showLineConfirm()">💬 LINEで報告する</button>
+    </div>
   </div>
+  <!-- ALT badge fixed top-right (visible on home/overlays) -->
+  <div class="alt-badge-fixed" id="altBadge"><span class="alt-icon">🪙</span><span id="altBadgeNum">0</span><span class="alt-unit">ALT</span></div>
   <div class="screen-overlay hidden" id="gameOverScreen">
     <div class="screen-title" id="gameOverTitle">🏜️ 終了！</div>
     <div class="final-stats">
@@ -182,7 +336,18 @@
     </div>
     <div class="stat-item"><div class="stat-value" style="font-size:1.1rem;" id="finalAccuracy">0%</div><div class="stat-label">正解率</div></div>
     <div class="stat-item" id="finalTimeRow" style="display:none;"><div class="stat-value" style="font-size:1.1rem;" id="finalTime">0.0秒</div><div class="stat-label">合計タイム</div></div>
-    <button class="ranking-btn-big" onclick="showRanking(state.mode)">🏆 ランキングを見る</button>
+    <div class="alt-result">
+      <div class="alt-stars" id="altStars"></div>
+      <div class="alt-earned" id="altEarned"></div>
+      <div style="font-size:1.1rem;font-weight:900;color:var(--sand);margin-top:2px;" id="altScore"></div>
+      <div class="alt-breakdown" id="altBreakdown"></div>
+      <div class="alt-first-clear hidden" id="altFirstClear">🌟 初クリアボーナス +3 ALT!</div>
+      <div class="alt-total" id="altTotal"></div>
+    </div>
+    <button class="ranking-btn-big" id="rankDetailBtn" onclick="showRanking(state.gameMode,state.mode)">🏆 ランキング詳細</button>
+    <button class="ranking-btn-big" id="registerRankBtn" style="background:linear-gradient(135deg,var(--leather),#6b4a2a);border-color:var(--rope);display:none;" onclick="startNameEntry()">📝 ランキングに登録する</button>
+    <div class="mini-ranking" id="miniRanking"></div>
+    <div class="ranking-gap" id="rankGapText"></div>
     <div class="mode-tabs" style="margin-top:6px;">
       <button class="mode-tab t-normal" id="modeTabNormal2" onclick="switchMode('normal')">📝 通常</button>
       <button class="mode-tab t-gunman" id="modeTabGunman2" onclick="switchMode('gunman')">🔫 ガンマン</button>
@@ -194,13 +359,19 @@
     </div>
   </div>
   <div class="ranking-overlay hidden" id="rankingOverlay">
-    <div class="screen-title" style="font-size:1.6rem;">🏆 ランキング</div>
-    <div class="ranking-tabs">
-      <button class="ranking-tab t-easy active" onclick="switchRankTab('easy')">🌱 かんたん</button>
-      <button class="ranking-tab t-normal" onclick="switchRankTab('normal')">⚡ ふつう</button>
-      <button class="ranking-tab t-hard" onclick="switchRankTab('hard')">🔥 むずかしい</button>
+    <div class="screen-title" style="font-size:1.6rem;">🏆 🔫 ガンマンランキング</div>
+    <div class="ranking-period-tabs">
+      <button class="ranking-period-tab t-weekly active" id="rankPeriodWeekly" onclick="switchRankPeriod('weekly')">🔥 週間</button>
+      <button class="ranking-period-tab t-alltime" id="rankPeriodAlltime" onclick="switchRankPeriod('alltime')">👑 永久</button>
     </div>
+    <div class="ranking-tabs">
+      <button class="ranking-tab t-easy active" onclick="switchRankDiff('easy')">🌱</button>
+      <button class="ranking-tab t-normal" onclick="switchRankDiff('normal')">⚡</button>
+      <button class="ranking-tab t-hard" onclick="switchRankDiff('hard')">🔥</button>
+    </div>
+    <div class="ranking-reset-info" id="rankResetInfo"></div>
     <div class="ranking-list" id="rankingList"></div>
+    <div class="ranking-best" id="rankingBest"></div>
     <button class="btn" style="padding:10px 30px;font-size:1rem;" onclick="hideRanking()">もどる</button>
   </div>
   <div class="screen-overlay hidden" id="nameEntryOverlay" style="z-index:260;">
@@ -248,6 +419,17 @@
   <div class="cards-area" id="cardsArea"></div>
 </div>
 <div class="result-popup" id="resultPopup"></div>
+<!-- LINE confirm -->
+<div class="line-confirm-overlay hidden" id="lineConfirmOverlay">
+  <div style="font-size:1.2rem;">⚠️</div>
+  <div class="line-confirm-text" id="lineConfirmText"></div>
+  <div class="line-confirm-alt" id="lineConfirmAlt"></div>
+  <div class="line-confirm-text">報告してALTをリセットします</div>
+  <div class="line-confirm-btns">
+    <button class="ranking-btn" style="padding:10px 24px;" onclick="cancelLineReport()">やめる</button>
+    <button class="btn" style="padding:10px 24px;font-size:0.95rem;background:linear-gradient(135deg,#06c755,#04a847);border-color:#06c755;" onclick="executeLineReport()">OK！送る</button>
+  </div>
+</div>
 <script>
 // ===================== STATE =====================
 const state = {
@@ -263,7 +445,88 @@ const state = {
   questionTimer:null, // per-question countdown for gunman mode
 };
 
-let selectedGameMode = 'normal'; // tracks the tab on start screen
+let selectedGameMode = 'normal';
+
+// ===================== ALT SYSTEM =====================
+let totalAlt = 0;
+let clearedLevels = {}; // tracks first clears: { 'easy-normal': true, ... }
+let highScore = 0;
+
+function updateAltBadge() {
+  const el = document.getElementById('altBadgeNum'); if (el) el.textContent = totalAlt;
+  // Update LINE report button state
+  updateLineReportBtn();
+}
+
+function getAltReward(combo) {
+  if (combo >= 4) return 2;
+  return 1;
+}
+
+function showAltFloat(n) {
+  const el = document.createElement('div'); el.className = 'alt-float';
+  if (n < 0) { el.textContent = `${n} ALT`; el.style.color = 'var(--accent)'; el.style.textShadow = '0 0 10px rgba(192,57,43,0.6)'; }
+  else { el.textContent = `+${n} ALT`; }
+  el.style.left = (40 + Math.random() * 20) + '%';
+  el.style.top = '42%';
+  document.body.appendChild(el); setTimeout(() => el.remove(), 950);
+}
+
+function getStarRating(accuracy) {
+  if (accuracy >= 100) return 3;
+  if (accuracy >= 80) return 2;
+  return 1;
+}
+
+function getStarBonus(stars) {
+  if (stars === 3) return 10;
+  if (stars === 2) return 5;
+  return 2;
+}
+
+function getLevelKey() {
+  return state.mode + '-' + state.gameMode;
+}
+
+function isFirstClear() {
+  return !clearedLevels[getLevelKey()];
+}
+
+// ALT badge visibility: show on overlays, hide during gameplay
+function setAltBadgeVisible(v) {
+  document.getElementById('altBadge').classList.toggle('hidden', !v);
+}
+
+// LINE report
+function updateLineReportBtn() {
+  const nameVal = (document.getElementById('lineNameInput').value || '').trim();
+  const btn = document.getElementById('lineReportBtn');
+  btn.disabled = (totalAlt <= 0 || nameVal.length === 0);
+}
+
+function showLineConfirm() {
+  const name = (document.getElementById('lineNameInput').value || '').trim();
+  if (!name || totalAlt <= 0) return;
+  document.getElementById('lineConfirmText').textContent = `${name}さんの記録を報告します`;
+  document.getElementById('lineConfirmAlt').textContent = `💰 ${totalAlt} ALT`;
+  document.getElementById('lineConfirmOverlay').classList.remove('hidden');
+}
+
+function cancelLineReport() {
+  document.getElementById('lineConfirmOverlay').classList.add('hidden');
+}
+
+function executeLineReport() {
+  const name = (document.getElementById('lineNameInput').value || '').trim();
+  const msg = `【分数ガンマン ALT報告】\n名前: ${name}\n💰 ${totalAlt}ALT\nハイスコア: ${highScore}点`;
+  const encoded = encodeURIComponent(msg);
+  const url = `https://line.me/R/oaMessage/@trail_official/?${encoded}`;
+  window.open(url, '_blank');
+  // Reset ALT
+  totalAlt = 0;
+  updateAltBadge();
+  document.getElementById('lineConfirmOverlay').classList.add('hidden');
+}
 
 // ===================== FRACTION POOLS =====================
 const easyPool = [
@@ -335,6 +598,8 @@ function showTumbleweed() {
   document.body.appendChild(el);
   setTimeout(() => el.remove(), 2000);
 }
+
+function showCoinFloat(n) {} // deprecated, replaced by showAltFloat
 
 function getComboTitle(combo) {
   if (combo >= 10) return '🤠 伝説のガンマン！';
@@ -627,6 +892,8 @@ function confirmAnswer(frac,card){
     state.combo=0;updateCombo();
     const pieEl=document.getElementById('pieChart');pieEl.classList.add('shake');
     card.classList.add('disabled');showPopup('💨 ハズレ！','wrong');showTumbleweed();
+    // Gray flash
+    const gf=document.createElement('div');gf.className='gray-flash';document.body.appendChild(gf);setTimeout(()=>gf.remove(),450);
     if(state.gameMode==='gunman')subtractTime(2.0);
     setTimeout(()=>{pieEl.classList.remove('shake');state.isAnimating=false;},450);
   }
@@ -647,6 +914,7 @@ function startGame(mode){
     lastCountdownNum:0,questionNum:0,totalElapsed:0,
   });
 
+  setAltBadgeVisible(false); // hide ALT during play
   const badge=document.getElementById('diffBadge');
   badge.className='diff-badge '+mode;
   badge.textContent=(mode==='easy'?'🌱 かんたん':mode==='normal'?'⚡ ふつう':'🔥 むずかしい');
@@ -677,42 +945,180 @@ function endGame(){
     }
     const title=state.totalCorrect>=20?'🤠 伝説のガンマン！':state.totalCorrect>=12?'🌟 凄腕ガンマン！':state.totalCorrect>=6?'🌵 いい腕だ！':'🏜️ 日が暮れた！';
     document.getElementById('gameOverTitle').textContent=title;
+
+    // ALT = clear reward only (not per-answer)
+    const stars = getStarRating(acc);
+    const starBonus = getStarBonus(stars);
+    let firstClearBonus = 0;
+    const isFirst = isFirstClear() && state.totalCorrect > 0;
+    if (isFirst) { firstClearBonus = 3; clearedLevels[getLevelKey()] = true; }
+    const totalEarned = starBonus + firstClearBonus;
+    totalAlt += totalEarned;
+    if (state.score > highScore) highScore = state.score;
+
+    // Star display
+    const starStr = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+    document.getElementById('altStars').textContent = starStr;
+    document.getElementById('altEarned').textContent = totalEarned > 0 ? `🪙 +${totalEarned} ALT` : '';
+    document.getElementById('altScore').textContent = `スコア: ${state.score}点`;
+    let bd = [];
+    bd.push(`${starStr}: +${starBonus}`);
+    if (firstClearBonus > 0) bd.push(`初クリア: +${firstClearBonus}`);
+    document.getElementById('altBreakdown').textContent = bd.join(' / ');
+    const fcEl = document.getElementById('altFirstClear');
+    fcEl.classList.toggle('hidden', !isFirst);
+    document.getElementById('altTotal').textContent = `合計: ${totalAlt} ALT`;
+
+    setAltBadgeVisible(true);
+    updateAltBadge();
     document.getElementById('gameOverScreen').classList.remove('hidden');
-    if(qualifiesForRanking(state.mode,state.score)){
-      setTimeout(()=>showNameEntry(state.mode,state.score,state.totalCorrect,state.maxCombo),600);
+    // Mini ranking + register button (gunman only)
+    const regBtn=document.getElementById('registerRankBtn');
+    const detBtn=document.getElementById('rankDetailBtn');
+    if(state.gameMode==='gunman'){
+      renderMiniRanking(state.gameMode,state.mode,state.score);
+      regBtn.style.display=state.score>0?'':'none';
+      detBtn.style.display='';
+    } else {
+      document.getElementById('miniRanking').innerHTML='';
+      document.getElementById('rankGapText').textContent='';
+      regBtn.style.display='none';
+      detBtn.style.display='none';
     }
   },500);
 }
 
 function quitGame(){endGame();}
 
-// ===================== RANKING =====================
+// ===================== RANKING (weekly + alltime, mode x difficulty) =====================
 const MAX_RANKING=7;
-let rankings={easy:[],normal:[],hard:[]};
-let currentRankTab='easy';let lastNewEntryId=null;let pendingEntry=null;let selectedGrade='';
+const RANK_MODES=['normal','gunman'];
+const RANK_DIFFS=['easy','normal','hard'];
 
-async function loadRankings(){try{const r=await window.storage.get('fraction-gunman-rankings');if(r&&r.value)rankings=JSON.parse(r.value);}catch(e){rankings={easy:[],normal:[],hard:[]};}}
-async function saveRankings(){try{await window.storage.set('fraction-gunman-rankings',JSON.stringify(rankings));}catch(e){}}
+// Two stores: weekly and alltime. Each keyed by 'normal-easy' etc.
+let weeklyRankings={};let alltimeRankings={};
+let prevWeeklyRankings={}; // snapshot for arrow comparison
+RANK_MODES.forEach(m=>RANK_DIFFS.forEach(d=>{const k=m+'-'+d;weeklyRankings[k]=[];alltimeRankings[k]=[];prevWeeklyRankings[k]=[];}));
 
-function qualifiesForRanking(mode,score){
-  if(score<=0)return false;const list=rankings[mode]||[];
-  if(list.length<MAX_RANKING)return true;return score>list[list.length-1].score;
+let currentRankPeriod='weekly';let currentRankMode='normal';let currentRankDiff='easy';
+let lastNewEntryId=null;let pendingEntry=null;let selectedGrade='';
+
+function getRankKey(gm,diff){return gm+'-'+diff;}
+function currentRankKey(){return getRankKey(currentRankMode,currentRankDiff);}
+function getRankStore(period){return period==='weekly'?weeklyRankings:alltimeRankings;}
+
+// Weekly reset: Monday 4:00 AM JST
+function getWeekStart(){
+  const now=new Date();
+  const jst=new Date(now.toLocaleString('en-US',{timeZone:'Asia/Tokyo'}));
+  const day=jst.getDay();const hrs=jst.getHours();
+  // Go back to most recent Monday 4:00
+  let daysBack=(day===0?6:day-1);
+  if(day===1&&hrs<4)daysBack=7;
+  const mon=new Date(jst);mon.setDate(mon.getDate()-daysBack);
+  mon.setHours(4,0,0,0);return mon.getTime();
 }
-function getRankPosition(mode,score){const list=rankings[mode]||[];for(let i=0;i<list.length;i++){if(score>list[i].score)return i+1;}return list.length+1;}
-function insertToRanking(mode,name,grade,score,correct,maxCombo){
-  if(!rankings[mode])rankings[mode]=[];const id=Date.now().toString();
-  rankings[mode].push({id,name,grade,score,correct,maxCombo});
-  rankings[mode].sort((a,b)=>b.score-a.score);rankings[mode]=rankings[mode].slice(0,MAX_RANKING);
-  lastNewEntryId=rankings[mode].find(e=>e.id===id)?id:null;saveRankings();
+
+function getNextReset(){
+  const ws=getWeekStart();return new Date(ws+7*24*60*60*1000);
 }
-function showNameEntry(mode,score,correct,maxCombo){
-  const rank=getRankPosition(mode,score);
-  const medals=['👑','🥈','🥉'];const rl=rank<=3?medals[rank-1]+' '+rank+'位':rank+'位';
+
+function getResetCountdown(){
+  const next=getNextReset();const now=new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Tokyo'}));
+  const diff=next-now;if(diff<=0)return 'まもなくリセット';
+  const d=Math.floor(diff/(24*60*60*1000));const h=Math.floor((diff%(24*60*60*1000))/(60*60*1000));
+  if(d>0)return `リセットまで ${d}日${h}時間`;
+  const m=Math.floor((diff%(60*60*1000))/(60*1000));
+  return `リセットまで ${h}時間${m}分`;
+}
+
+async function loadRankings(){
+  try{
+    const r=await window.storage.get('fg-rankings-v3');
+    if(r&&r.value){
+      const d=JSON.parse(r.value);
+      if(d.weekly)Object.keys(d.weekly).forEach(k=>{if(weeklyRankings.hasOwnProperty(k))weeklyRankings[k]=d.weekly[k];});
+      if(d.alltime)Object.keys(d.alltime).forEach(k=>{if(alltimeRankings.hasOwnProperty(k))alltimeRankings[k]=d.alltime[k];});
+      if(d.weekStart){
+        const currentWeekStart=getWeekStart();
+        if(d.weekStart<currentWeekStart){
+          // Week has rolled over - save prev for arrows, then reset
+          RANK_MODES.forEach(m=>RANK_DIFFS.forEach(dd=>{const k=m+'-'+dd;prevWeeklyRankings[k]=[...weeklyRankings[k]];weeklyRankings[k]=[];}));
+          saveRankings();
+        }
+      }
+    }
+  }catch(e){}
+}
+async function saveRankings(){
+  try{await window.storage.set('fg-rankings-v3',JSON.stringify({weekly:weeklyRankings,alltime:alltimeRankings,weekStart:getWeekStart()}));}catch(e){}
+}
+
+function sortEntries(list,gm){
+  list.sort((a,b)=>{
+    if(b.score!==a.score)return b.score-a.score;
+    if(gm==='normal')return(a.time||9999)-(b.time||9999);
+    return(b.correct||0)-(a.correct||0);
+  });
+  return list.slice(0,MAX_RANKING);
+}
+
+function qualifiesForRanking(gm,diff,score){
+  if(score<=0)return false;
+  // Check both weekly and alltime
+  const wk=weeklyRankings[getRankKey(gm,diff)]||[];
+  const at=alltimeRankings[getRankKey(gm,diff)]||[];
+  const wOk=wk.length<MAX_RANKING||score>wk[wk.length-1].score;
+  const aOk=at.length<MAX_RANKING||score>at[at.length-1].score;
+  return wOk||aOk;
+}
+
+function getRankPosition(store,gm,diff,score){
+  const list=store[getRankKey(gm,diff)]||[];
+  for(let i=0;i<list.length;i++){if(score>list[i].score)return i+1;}
+  return list.length+1;
+}
+
+function insertToRanking(gm,diff,name,grade,score,correct,maxCombo,extraInfo){
+  const key=getRankKey(gm,diff);
+  const id=Date.now().toString();
+  const dateStr=new Date().toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'});
+  const entry={id,name,grade,score,correct,maxCombo,date:dateStr,...extraInfo};
+  // Insert into both
+  weeklyRankings[key].push({...entry});
+  weeklyRankings[key]=sortEntries(weeklyRankings[key],gm);
+  alltimeRankings[key].push({...entry});
+  alltimeRankings[key]=sortEntries(alltimeRankings[key],gm);
+  lastNewEntryId=id;
+  saveRankings();
+}
+
+// Arrow: compare current position vs previous week
+function getArrow(entry,store,key){
+  const prev=prevWeeklyRankings[key]||[];
+  if(!prev.length)return '';
+  const curList=store[key]||[];
+  const curIdx=curList.findIndex(e=>e.id===entry.id);
+  // Find same name in prev
+  const prevIdx=prev.findIndex(e=>e.name===entry.name);
+  if(prevIdx===-1)return '<span class="ranking-arrow up">🆕</span>';
+  if(curIdx<prevIdx)return '<span class="ranking-arrow up">↑</span>';
+  if(curIdx>prevIdx)return '<span class="ranking-arrow down">↓</span>';
+  return '<span class="ranking-arrow same">→</span>';
+}
+
+function showNameEntry(gm,diff,score,correct,maxCombo,extraInfo){
+  const wRank=getRankPosition(weeklyRankings,gm,diff,score);
+  const aRank=getRankPosition(alltimeRankings,gm,diff,score);
+  const bestRank=Math.min(wRank,aRank);
+  const medals=['👑','🥈','🥉'];const rl=bestRank<=3?medals[bestRank-1]+' '+bestRank+'位':bestRank+'位';
   document.getElementById('nameEntryRankText').textContent=rl+' にランクイン！';
-  document.getElementById('nameEntryScoreText').textContent=`スコア: ${score}　正解: ${correct}問`;
+  const modeLabel=gm==='gunman'?'🔫ガンマン':'📝通常';
+  const diffLabel=diff==='easy'?'かんたん':diff==='normal'?'ふつう':'むずかしい';
+  document.getElementById('nameEntryScoreText').textContent=`${modeLabel} ${diffLabel} / スコア: ${score}`;
   document.getElementById('nameEntryInput').value='';
   document.querySelectorAll('.grade-btn').forEach(b=>b.classList.remove('selected'));selectedGrade='';
-  pendingEntry={mode,score,correct,maxCombo};
+  pendingEntry={gm,diff,score,correct,maxCombo,extraInfo};
   document.getElementById('nameEntryOverlay').classList.remove('hidden');
   setTimeout(()=>document.getElementById('nameEntryInput').focus(),100);
 }
@@ -720,35 +1126,113 @@ function selectGrade(btn){document.querySelectorAll('.grade-btn').forEach(b=>b.c
 function confirmNameEntry(){
   if(!pendingEntry)return;
   const name=(document.getElementById('nameEntryInput').value||'').trim()||'名無し';
-  const{mode,score,correct,maxCombo}=pendingEntry;
-  insertToRanking(mode,name,selectedGrade,score,correct,maxCombo);
-  pendingEntry=null;document.getElementById('nameEntryOverlay').classList.add('hidden');showRanking(mode);
+  const{gm,diff,score,correct,maxCombo,extraInfo}=pendingEntry;
+  insertToRanking(gm,diff,name,selectedGrade,score,correct,maxCombo,extraInfo);
+  pendingEntry=null;document.getElementById('nameEntryOverlay').classList.add('hidden');
+  currentRankPeriod='weekly';currentRankMode='gunman';currentRankDiff=diff;showRanking();
 }
 function skipNameEntry(){pendingEntry=null;lastNewEntryId=null;document.getElementById('nameEntryOverlay').classList.add('hidden');}
 
-function renderRankingList(mode){
-  const list=document.getElementById('rankingList');const entries=rankings[mode]||[];
-  if(!entries.length){list.innerHTML='<div class="ranking-empty">まだ記録がないよ！</div>';return;}
+function startNameEntry(){
+  showNameEntry(state.gameMode,state.mode,state.score,state.totalCorrect,state.maxCombo,{});
+}
+
+// Mini ranking (TOP3) for result screen
+function renderMiniRanking(gm,diff,myScore){
+  const el=document.getElementById('miniRanking');
+  const wList=(weeklyRankings[getRankKey(gm,diff)]||[]).slice(0,3);
+  if(!wList.length){el.innerHTML='';return;}
+  let html='<div class="mini-ranking-title">🔥 今週のTOP3</div>';
+  wList.forEach((e,i)=>{
+    const medals=['👑','🥈','🥉'];
+    const rc=i===0?'r1':i===1?'r2':i===2?'r3':'';
+    const isNew=e.id===lastNewEntryId;
+    html+=`<div class="mini-entry ${isNew?'highlight':''}"><div class="mini-rank ${rc}">${medals[i]}</div><div class="mini-name">${e.name}</div><div class="mini-score">${e.score}</div></div>`;
+  });
+  el.innerHTML=html;
+  // Gap text
+  const gapEl=document.getElementById('rankGapText');
+  const wk=weeklyRankings[getRankKey(gm,diff)]||[];
+  if(wk.length>=MAX_RANKING&&myScore<=wk[wk.length-1].score){
+    const gap=wk[wk.length-1].score-myScore+1;
+    gapEl.textContent=`あと ${gap}点 で週間ランクイン！`;
+  } else if(wk.length>0&&!wk.find(e=>e.id===lastNewEntryId)){
+    const lastScore=wk[wk.length-1]?.score||0;
+    if(myScore<=lastScore){
+      const gap=lastScore-myScore+1;
+      gapEl.textContent=`あと ${gap}点 で週間ランクイン！`;
+    } else {gapEl.textContent='';}
+  } else {gapEl.textContent='';}
+}
+
+// Full ranking list render
+function renderRankingList(){
+  const store=getRankStore(currentRankPeriod);
+  const key=currentRankKey();
+  const list=document.getElementById('rankingList');
+  const entries=store[key]||[];
+  // Reset info
+  const resetEl=document.getElementById('rankResetInfo');
+  if(currentRankPeriod==='weekly'){resetEl.textContent=getResetCountdown();}
+  else{resetEl.textContent='全期間の記録';}
+
+  if(!entries.length){list.innerHTML='<div class="ranking-empty">まだ記録がないよ！</div>';document.getElementById('rankingBest').textContent='';return;}
+  const isNormal=currentRankMode==='normal';
+  const isWeekly=currentRankPeriod==='weekly';
   list.innerHTML=entries.map((e,i)=>{
     const rc=i===0?'r1':i===1?'r2':i===2?'r3':'';
     const medals=['👑','🥈','🥉'];const rl=i<3?medals[i]:(i+1);
     const isNew=e.id===lastNewEntryId;
     const gt=e.grade?`<span class="ranking-grade">${e.grade}</span>`:'';
-    return `<div class="ranking-entry ${isNew?'highlight':''}"><div class="ranking-rank ${rc}">${rl}</div><div class="ranking-name">${e.name} ${gt}${isNew?'<span class="new-record-badge"> NEW!</span>':''}</div><div style="text-align:right"><div class="ranking-score">${e.score}</div><div class="ranking-detail">${e.correct}問 / コンボ${e.maxCombo}</div></div></div>`;
+    const dateStr=e.date?`<div class="ranking-date">${e.date}</div>`:'';
+    const detail=isNormal
+      ?`${e.correct}問 / ${e.time?e.time.toFixed(1)+'秒':'--'}`
+      :`${e.correct}問 / コンボ${e.maxCombo}`;
+    const arrow=isWeekly?getArrow(e,store,key):'';
+    return `<div class="ranking-entry ${isNew?'highlight':''}"><div class="ranking-rank ${rc}">${rl}${arrow}</div><div class="ranking-name">${e.name} ${gt}${isNew?'<span class="new-record-badge"> NEW!</span>':''}</div><div style="text-align:right"><div class="ranking-score">${e.score}</div><div class="ranking-detail">${detail}</div>${dateStr}</div></div>`;
   }).join('');
+  const best=entries[0];
+  document.getElementById('rankingBest').textContent=best?`🎯 ベスト: ${best.score}点（${best.name}）`:'';
 }
-function switchRankTab(mode){
-  currentRankTab=mode;document.querySelectorAll('.ranking-tab').forEach(t=>t.classList.remove('active'));
-  const tabs=document.querySelectorAll('.ranking-tab');const idx=mode==='easy'?0:mode==='normal'?1:2;
-  tabs[idx].classList.add('active');renderRankingList(mode);
+
+function switchRankPeriod(p){
+  currentRankPeriod=p;
+  document.getElementById('rankPeriodWeekly').classList.toggle('active',p==='weekly');
+  document.getElementById('rankPeriodAlltime').classList.toggle('active',p==='alltime');
+  renderRankingList();
 }
-function showRanking(focusMode){
-  if(focusMode){currentRankTab=focusMode;document.querySelectorAll('.ranking-tab').forEach(t=>t.classList.remove('active'));const tabs=document.querySelectorAll('.ranking-tab');const idx=focusMode==='easy'?0:focusMode==='normal'?1:2;tabs[idx].classList.add('active');}
-  renderRankingList(currentRankTab);document.getElementById('rankingOverlay').classList.remove('hidden');
+function switchRankMode(m){
+  currentRankMode=m;
+  document.getElementById('rankModeNormal').classList.toggle('active',m==='normal');
+  document.getElementById('rankModeGunman').classList.toggle('active',m==='gunman');
+  renderRankingList();
+}
+function switchRankDiff(d){
+  currentRankDiff=d;
+  document.querySelectorAll('#rankingOverlay .ranking-tab').forEach(t=>t.classList.remove('active'));
+  const tabs=document.querySelectorAll('#rankingOverlay .ranking-tab');
+  const idx=d==='easy'?0:d==='normal'?1:2;
+  tabs[idx].classList.add('active');
+  renderRankingList();
+}
+function showRanking(focusGm,focusDiff){
+  currentRankMode='gunman'; // gunman only
+  if(focusDiff)currentRankDiff=focusDiff;
+  document.getElementById('rankPeriodWeekly').classList.toggle('active',currentRankPeriod==='weekly');
+  document.getElementById('rankPeriodAlltime').classList.toggle('active',currentRankPeriod==='alltime');
+  document.querySelectorAll('#rankingOverlay .ranking-tab').forEach(t=>t.classList.remove('active'));
+  const tabs=document.querySelectorAll('#rankingOverlay .ranking-tab');
+  const idx=currentRankDiff==='easy'?0:currentRankDiff==='normal'?1:2;
+  tabs[idx].classList.add('active');
+  renderRankingList();
+  document.getElementById('rankingOverlay').classList.remove('hidden');
 }
 function hideRanking(){document.getElementById('rankingOverlay').classList.add('hidden');lastNewEntryId=null;}
 
 loadRankings();
+updateAltBadge();
+// LINE name input listener
+document.getElementById('lineNameInput').addEventListener('input', updateLineReportBtn);
 
 // ===================== BG =====================
 (function(){
