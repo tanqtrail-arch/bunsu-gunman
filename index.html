@@ -432,6 +432,32 @@
   </div>
 </div>
 <script>
+// ─── TRAIL ALT・ランキング連携 ───────────────────────────
+const GAS_URL     = 'https://script.google.com/macros/s/AKfycbzKUyiUHIMp9JRFX0LEa88plEoavkbrjTQ5oHf9T-FDd6b4fhqfTCBVBy5rWUZPUQbY/exec';
+const GAME_ID     = 2;
+const GAME_NAME   = '分数ガンマン';
+const SCORE_LABEL = '点';
+const ALT_AMOUNT  = 10;
+const TRAIL_PLAYER = new URLSearchParams(location.search).get('player') || null;
+
+let _trailResultSent = false;
+async function sendResult(score) {
+  if (!TRAIL_PLAYER || _trailResultSent) return;
+  _trailResultSent = true;
+  const opt = { method:'POST', redirect:'follow', headers:{'Content-Type':'text/plain'} };
+  await fetch(GAS_URL, { ...opt, body: JSON.stringify({
+    action: 'saveRanking',
+    gameId: GAME_ID, gameName: GAME_NAME,
+    player: TRAIL_PLAYER, score: score, scoreLabel: SCORE_LABEL
+  })});
+  await fetch(GAS_URL, { ...opt, body: JSON.stringify({
+    action: 'addCoin',
+    player: TRAIL_PLAYER, gameId: GAME_ID,
+    gameName: GAME_NAME, amount: ALT_AMOUNT
+  })});
+}
+// ─────────────────────────────────────────────────────────
+
 // ===================== STATE =====================
 const state = {
   score:0, combo:0, maxCombo:0, totalCorrect:0, totalAttempts:0,
@@ -912,8 +938,9 @@ function startGame(mode){
   Object.assign(state,{
     score:0,combo:0,maxCombo:0,totalCorrect:0,totalAttempts:0,
     isAnimating:false,timeLeft:30.0,gameRunning:true,
-    lastCountdownNum:0,questionNum:0,totalElapsed:0,
+    lastCountdownNum:0,questionNum:0,totalElapsed:0,isQuit:false,
   });
+  _trailResultSent = false;
 
   setAltBadgeVisible(false); // hide ALT during play
   const badge=document.getElementById('diffBadge');
@@ -972,6 +999,8 @@ function endGame(){
 
     setAltBadgeVisible(true);
     updateAltBadge();
+    // TRAIL: クリア成功時のみスコア送信（途中リタイアは除外）
+    if (!state.isQuit && state.score > 0) sendResult(state.score);
     document.getElementById('gameOverScreen').classList.remove('hidden');
     // Mini ranking + register button (gunman only)
     const regBtn=document.getElementById('registerRankBtn');
@@ -989,7 +1018,7 @@ function endGame(){
   },500);
 }
 
-function quitGame(){endGame();}
+function quitGame(){state.isQuit=true;endGame();}
 
 function goHome(){
   document.getElementById('gameOverScreen').classList.add('hidden');
