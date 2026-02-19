@@ -74,6 +74,7 @@
   .mode-tab.active{color:var(--text);}
   .mode-tab.active.t-normal{background:linear-gradient(135deg,var(--leather),#6b4a2a);}
   .mode-tab.active.t-gunman{background:linear-gradient(135deg,var(--accent),#a0301f);}
+  .mode-tab.active.t-battle{background:linear-gradient(135deg,#8e44ad,#6c3483);}
   .mode-desc{font-size:0.75rem;color:var(--text-dim);text-align:center;max-width:320px;margin-bottom:2px;}
   .diff-buttons{display:flex;gap:12px;margin-top:6px;flex-wrap:wrap;justify-content:center;}
   .diff-btn{border:2px solid;padding:14px 28px;border-radius:10px;font-size:1rem;font-weight:900;font-family:'Zen Maru Gothic',sans-serif;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:110px;box-shadow:0 4px 15px rgba(0,0,0,0.4);}
@@ -168,7 +169,7 @@
     .pie-chart{width:260px;height:260px;border-width:4px;}
     .shatter-container{width:280px;height:280px;}
     .cards-area{max-width:900px;gap:14px;padding:10px 32px 32px;}
-    .fraction-card{padding:14px 22px;min-width:80px;border-radius:12px;border-width:3px;}
+    .fraction-card{padding:14px 22px;min-width:80px;min-height:56px;border-radius:12px;border-width:3px;}
     .fraction-card .numerator,.fraction-card .denominator{font-size:1.8rem;}
     .fraction-card .fraction-bar{width:40px;height:4px;margin:4px 0;}
     .screen-overlay{gap:18px;}
@@ -291,10 +292,12 @@
   .battle-cards .fraction-card .fraction-bar{width:28px;height:2px;margin:2px 0;}
   .battle-center{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 0;position:relative;z-index:10;flex-shrink:0;}
   .battle-divider{width:90%;height:2px;background:linear-gradient(90deg,transparent,rgba(200,160,96,0.3),var(--gold),rgba(200,160,96,0.3),transparent);margin:2px 0;}
+  .battle-pies{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:8px;}
+  .battle-pie-center-info{display:flex;flex-direction:column;align-items:center;gap:2px;}
   .battle-vs{font-size:1rem;font-weight:900;color:var(--gold);text-shadow:0 0 15px rgba(240,192,64,0.5);letter-spacing:4px;}
-  .battle-pie-wrapper{width:140px;height:140px;display:flex;align-items:center;justify-content:center;position:relative;}
-  .battle-pie-wrapper .pie-chart{width:130px;height:130px;}
-  .battle-pie-wrapper .shatter-container{width:140px;height:140px;}
+  .battle-pie-wrapper{width:120px;height:120px;display:flex;align-items:center;justify-content:center;position:relative;}
+  .battle-pie-wrapper .pie-chart{width:110px;height:110px;}
+  .battle-pie-wrapper .shatter-container{width:120px;height:120px;}
   .battle-round{font-size:0.75rem;color:var(--text-dim);font-weight:700;}
   .battle-flash{position:absolute;top:0;left:0;width:100%;height:50%;pointer-events:none;z-index:20;}
   .battle-flash.p1{bottom:0;top:auto;}
@@ -324,10 +327,11 @@
   @keyframes crown-bounce{0%{transform:translateY(0) scale(1)}100%{transform:translateY(-6px) scale(1.1)}}
   #battleSetupScreen .battle-setup-desc{font-size:0.85rem;color:var(--text-dim);text-align:center;max-width:320px;line-height:1.6;}
   @media(min-width:768px){
-    .battle-pie-wrapper{width:180px;height:180px;}
-    .battle-pie-wrapper .pie-chart{width:165px;height:165px;}
-    .battle-pie-wrapper .shatter-container{width:180px;height:180px;}
-    .battle-cards{max-width:480px;gap:10px;}
+    .battle-pies{gap:16px;}
+    .battle-pie-wrapper{width:160px;height:160px;}
+    .battle-pie-wrapper .pie-chart{width:148px;height:148px;}
+    .battle-pie-wrapper .shatter-container{width:160px;height:160px;}
+    .battle-cards{max-width:520px;gap:10px;}
     .battle-cards .fraction-card{min-height:56px;padding:10px 14px;}
     .battle-cards .fraction-card .numerator,.battle-cards .fraction-card .denominator{font-size:1.5rem;}
     .battle-cards .fraction-card .fraction-bar{width:34px;height:3px;}
@@ -338,10 +342,11 @@
     .battle-result-score{font-size:2.5rem;}
   }
   @media(min-width:768px) and (orientation:landscape){
-    .battle-pie-wrapper{width:150px;height:150px;}
-    .battle-pie-wrapper .pie-chart{width:138px;height:138px;}
-    .battle-pie-wrapper .shatter-container{width:150px;height:150px;}
+    .battle-pie-wrapper{width:130px;height:130px;}
+    .battle-pie-wrapper .pie-chart{width:120px;height:120px;}
+    .battle-pie-wrapper .shatter-container{width:130px;height:130px;}
     .battle-center{flex-direction:row;gap:16px;padding:4px 0;}
+    .battle-pies{gap:12px;}
     .battle-cards{max-width:360px;}
     .battle-side{padding:4px 16px;}
   }
@@ -416,11 +421,11 @@
     <div class="screen-title">🤠 分数ガンマン</div>
     <div class="screen-subtitle">円グラフに合う分数カードを<br>クリック一発で撃ち抜け！💥</div>
     <div class="mode-tabs">
-      <button class="mode-tab t-normal active" id="modeTabNormal" onclick="switchMode('normal')">📝 通常モード</button>
-      <button class="mode-tab t-gunman" id="modeTabGunman" onclick="switchMode('gunman')">🔫 ガンマンモード</button>
+      <button class="mode-tab t-normal active" id="modeTabNormal" onclick="switchMode('normal')">📝 通常</button>
+      <button class="mode-tab t-gunman" id="modeTabGunman" onclick="switchMode('gunman')">🔫 ガンマン</button>
+      <button class="mode-tab t-battle" id="modeTabBattle" onclick="switchMode('battle')">⚔️ 対戦</button>
     </div>
     <div class="mode-desc" id="modeDesc">10問チャレンジ！じっくり正確に答えよう</div>
-    <button class="ranking-btn-big" style="background:linear-gradient(135deg,rgba(52,152,219,0.15),rgba(192,57,43,0.15));border-image:linear-gradient(135deg,#3498db,#c0392b) 1;animation:none;" onclick="showBattleSetup()">⚔️ 決闘モード（2人対戦）</button>
     <div style="color:var(--text-dim);font-size:0.9rem;font-weight:700;">難易度をえらぼう 🌵</div>
     <div class="diff-buttons">
       <button class="diff-btn easy" onclick="startGame('easy')"><span class="diff-label">🌱 かんたん</span><span class="diff-desc">1/2, 1/3, 3/4 など</span></button>
@@ -553,12 +558,20 @@
   </div>
   <div class="battle-center">
     <div class="battle-divider"></div>
-    <div class="battle-vs" id="battleVsText">VS</div>
-    <div class="battle-pie-wrapper">
-      <div class="pie-chart" id="battlePieChart"><canvas id="battlePieCanvas" width="400" height="400"></canvas></div>
-      <div class="shatter-container" id="battleShatterContainer"></div>
+    <div class="battle-pies">
+      <div class="battle-pie-wrapper p2-pie" style="transform:rotate(180deg);">
+        <div class="pie-chart" id="battlePieChartP2"><canvas id="battlePieCanvasP2" width="400" height="400"></canvas></div>
+        <div class="shatter-container" id="battleShatterContainerP2"></div>
+      </div>
+      <div class="battle-pie-center-info">
+        <div class="battle-vs" id="battleVsText">VS</div>
+        <div class="battle-round" id="battleRound">Round 1 / 10</div>
+      </div>
+      <div class="battle-pie-wrapper p1-pie">
+        <div class="pie-chart" id="battlePieChart"><canvas id="battlePieCanvas" width="400" height="400"></canvas></div>
+        <div class="shatter-container" id="battleShatterContainer"></div>
+      </div>
     </div>
-    <div class="battle-round" id="battleRound">Round 1 / 10</div>
     <div class="battle-divider"></div>
   </div>
   <div class="battle-side p1" id="battleSideP1">
@@ -862,10 +875,15 @@ function subtractTime(seconds) {
 
 // ===================== MODE SWITCH (start screen) =====================
 function switchMode(mode) {
+  if (mode === 'battle') {
+    showBattleSetup();
+    return;
+  }
   selectedGameMode = mode;
   // Sync all mode tabs (start screen + game over screen)
   document.getElementById('modeTabNormal').classList.toggle('active', mode==='normal');
   document.getElementById('modeTabGunman').classList.toggle('active', mode==='gunman');
+  document.getElementById('modeTabBattle').classList.remove('active');
   document.getElementById('modeTabNormal2').classList.toggle('active', mode==='normal');
   document.getElementById('modeTabGunman2').classList.toggle('active', mode==='gunman');
   document.getElementById('modeDesc').textContent = mode==='normal'
@@ -1456,6 +1474,10 @@ const battleState = {
 };
 
 function showBattleSetup() {
+  // Mark battle tab as active
+  document.getElementById('modeTabNormal').classList.remove('active');
+  document.getElementById('modeTabGunman').classList.remove('active');
+  document.getElementById('modeTabBattle').classList.add('active');
   document.getElementById('startScreen').classList.add('hidden');
   document.getElementById('battleSetupScreen').classList.remove('hidden');
 }
@@ -1463,13 +1485,17 @@ function showBattleSetup() {
 function hideBattleSetup() {
   document.getElementById('battleSetupScreen').classList.add('hidden');
   document.getElementById('startScreen').classList.remove('hidden');
+  // Reset battle tab to inactive, restore previous selected mode tab
+  document.getElementById('modeTabBattle').classList.remove('active');
+  document.getElementById('modeTabNormal').classList.toggle('active', selectedGameMode==='normal');
+  document.getElementById('modeTabGunman').classList.toggle('active', selectedGameMode==='gunman');
 }
 
 function getBattlePool() {
   return battleState.mode==='easy'?easyPool:battleState.mode==='normal'?normalPool:hardPool;
 }
 function getBattleNumDummies() {
-  return battleState.mode==='easy'?3:battleState.mode==='normal'?4:5;
+  return 5; // Always 6 choices (1 answer + 5 dummies) in battle mode
 }
 
 function startBattle(diff) {
@@ -1532,17 +1558,18 @@ function generateBattleQuestion() {
   }
   const options = shuffle([answer, ...dummies]);
 
-  // Draw pie chart
-  const canvas = document.getElementById('battlePieCanvas');
-  const pieEl = document.getElementById('battlePieChart');
-  pieEl.style.opacity = '1'; pieEl.style.transform = 'scale(1)';
-  pieEl.classList.remove('entering'); void pieEl.offsetWidth;
-  pieEl.style.animationDuration = '0.2s';
-  pieEl.classList.add('entering');
-  // Use existing drawPieChart with temporary state override
+  // Draw pie charts (P1 normal + P2 rotated)
   const origMode = state.mode;
   state.mode = battleState.mode;
-  drawPieChart(canvas, answer);
+  [['battlePieCanvas','battlePieChart'],['battlePieCanvasP2','battlePieChartP2']].forEach(([canvasId,pieId])=>{
+    const canvas = document.getElementById(canvasId);
+    const pieEl = document.getElementById(pieId);
+    pieEl.style.opacity = '1'; pieEl.style.transform = 'scale(1)';
+    pieEl.classList.remove('entering'); void pieEl.offsetWidth;
+    pieEl.style.animationDuration = '0.2s';
+    pieEl.classList.add('entering');
+    drawPieChart(canvas, answer);
+  });
   state.mode = origMode;
 
   // Render cards for both players (same options, different order for fairness)
@@ -1651,24 +1678,27 @@ function battleAnswer(player, frac, card) {
 }
 
 function battleShatterPie() {
-  const container = document.getElementById('battleShatterContainer');
-  const canvas = document.getElementById('battlePieCanvas');
-  const pieEl = document.getElementById('battlePieChart');
-  const imgData = canvas.toDataURL();
-  pieEl.style.opacity = '0'; pieEl.style.transform = 'scale(0.7)';
-  const cw = 140;
-  for (let i = 0; i < 8; i++) {
-    const shard = document.createElement('div'); shard.className = 'shard';
-    const angle = (i / 8) * Math.PI * 2, dist = 40 + Math.random() * 60;
-    const tx = Math.cos(angle) * dist, ty = Math.sin(angle) * dist;
-    const rot = (Math.random() - 0.5) * 720, size = 16 + Math.random() * 25;
-    const half = cw / 2;
-    const ox = half + Math.cos(angle) * 20 - size / 2, oy = half + Math.sin(angle) * 20 - size / 2;
-    const pts = []; for (let j = 0; j < 4 + Math.floor(Math.random() * 3); j++) pts.push(`${Math.random()*100}% ${Math.random()*100}%`);
-    shard.style.cssText = `left:${ox}px;top:${oy}px;width:${size}px;height:${size}px;background-image:url(${imgData});background-size:${cw}px ${cw}px;background-position:-${ox}px -${oy}px;clip-path:polygon(${pts.join(',')});--tx:${tx}px;--ty:${ty}px;--rot:${rot}deg;animation:shard-fly 0.4s ease-out forwards;`;
-    container.appendChild(shard);
-  }
-  setTimeout(() => { container.innerHTML = ''; }, 500);
+  [['battleShatterContainer','battlePieCanvas','battlePieChart'],
+   ['battleShatterContainerP2','battlePieCanvasP2','battlePieChartP2']].forEach(([contId,canvId,pieId])=>{
+    const container = document.getElementById(contId);
+    const canvas = document.getElementById(canvId);
+    const pieEl = document.getElementById(pieId);
+    const imgData = canvas.toDataURL();
+    pieEl.style.opacity = '0'; pieEl.style.transform = 'scale(0.7)';
+    const cw = 120;
+    for (let i = 0; i < 8; i++) {
+      const shard = document.createElement('div'); shard.className = 'shard';
+      const angle = (i / 8) * Math.PI * 2, dist = 40 + Math.random() * 60;
+      const tx = Math.cos(angle) * dist, ty = Math.sin(angle) * dist;
+      const rot = (Math.random() - 0.5) * 720, size = 16 + Math.random() * 25;
+      const half = cw / 2;
+      const ox = half + Math.cos(angle) * 20 - size / 2, oy = half + Math.sin(angle) * 20 - size / 2;
+      const pts = []; for (let j = 0; j < 4 + Math.floor(Math.random() * 3); j++) pts.push(`${Math.random()*100}% ${Math.random()*100}%`);
+      shard.style.cssText = `left:${ox}px;top:${oy}px;width:${size}px;height:${size}px;background-image:url(${imgData});background-size:${cw}px ${cw}px;background-position:-${ox}px -${oy}px;clip-path:polygon(${pts.join(',')});--tx:${tx}px;--ty:${ty}px;--rot:${rot}deg;animation:shard-fly 0.4s ease-out forwards;`;
+      container.appendChild(shard);
+    }
+    setTimeout(() => { container.innerHTML = ''; }, 500);
+  });
 }
 
 function endBattle() {
