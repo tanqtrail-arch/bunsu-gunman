@@ -237,6 +237,115 @@
     .ranking-list{width:460px;}
   }
 
+  /* ===== Tablet Landscape Optimization ===== */
+  @media(min-width:768px) and (orientation:landscape){
+    .header{max-width:100%;padding:10px 32px 4px;}
+    .timer-area{max-width:100%;padding:4px 32px;}
+    .play-area{flex-direction:row;max-width:100%;gap:24px;padding:0 32px;justify-content:center;align-items:center;}
+    .cards-area{display:grid;grid-template-columns:repeat(3,1fr);max-width:none;width:auto;flex:0 0 auto;gap:12px;padding:0;align-content:center;}
+    .pie-wrapper{flex-shrink:0;}
+    .question-text{position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:1rem;}
+    .play-area{position:relative;padding-top:32px;}
+    .fraction-card{min-width:70px;min-height:56px;justify-content:center;}
+    /* Start screen landscape 2-column */
+    #startScreen{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto 1fr auto;gap:8px 24px;padding:24px 40px;align-content:center;justify-items:center;}
+    #startScreen .screen-title{grid-column:1/3;}
+    #startScreen .screen-subtitle{grid-column:1/3;}
+    #startScreen .mode-tabs{grid-column:1;grid-row:3;align-self:start;}
+    #startScreen .mode-desc{grid-column:1;grid-row:3;align-self:center;margin-top:60px;}
+    #startScreen .diff-buttons{grid-column:2;grid-row:3;align-self:center;flex-direction:column;}
+    #startScreen .ranking-btn-big{grid-column:1;grid-row:4;}
+    #startScreen .line-report-section{grid-column:2;grid-row:4;margin-top:0;}
+    /* Game over landscape 2-column */
+    #gameOverScreen{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;padding:20px 40px;align-content:center;justify-items:center;}
+    #gameOverScreen .screen-title{grid-column:1/3;}
+    #gameOverScreen .final-stats{grid-column:1;}
+    #gameOverScreen .alt-result{grid-column:1;}
+    #gameOverScreen .mini-ranking{grid-column:2;grid-row:2/5;}
+    #gameOverScreen .ranking-gap{grid-column:2;}
+    #gameOverScreen .mode-tabs{grid-column:1/3;}
+    #gameOverScreen .diff-buttons{grid-column:1/3;}
+    #gameOverScreen .btn{grid-column:1/3;}
+  }
+  @media(min-width:1024px) and (orientation:landscape){
+    .cards-area{grid-template-columns:repeat(3,1fr);gap:14px;}
+    .fraction-card{min-width:85px;min-height:60px;padding:14px 24px;}
+    .play-area{gap:36px;}
+  }
+
+  /* ===== Battle Mode Styles ===== */
+  .battle-container{position:fixed;top:0;left:0;width:100vw;height:100vh;background:linear-gradient(180deg,#1c1008 0%,#2a1a0e 40%,#3a2510 70%,#1c1008 100%);display:flex;flex-direction:column;z-index:100;overflow:hidden;}
+  .battle-container.hidden{display:none;}
+  .battle-side{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 12px;position:relative;min-height:0;}
+  .battle-side.p2{transform:rotate(180deg);}
+  .battle-header{display:flex;align-items:center;justify-content:center;gap:12px;padding:4px 12px;width:100%;max-width:500px;}
+  .battle-player-label{font-size:0.85rem;font-weight:900;padding:3px 12px;border-radius:8px;border:2px solid;}
+  .battle-player-label.p1-label{background:rgba(52,152,219,0.2);color:#5dade2;border-color:rgba(52,152,219,0.4);}
+  .battle-player-label.p2-label{background:rgba(192,57,43,0.2);color:#e74c3c;border-color:rgba(192,57,43,0.4);}
+  .battle-score{font-size:1.2rem;font-weight:900;color:var(--gold);display:flex;align-items:center;gap:4px;}
+  .battle-combo{font-size:0.8rem;font-weight:700;color:var(--gold);opacity:0;transition:opacity 0.3s;}
+  .battle-combo.active{opacity:1;}
+  .battle-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:400px;padding:4px;}
+  .battle-cards .fraction-card{min-height:48px;padding:8px 10px;}
+  .battle-cards .fraction-card .numerator,.battle-cards .fraction-card .denominator{font-size:1.2rem;}
+  .battle-cards .fraction-card .fraction-bar{width:28px;height:2px;margin:2px 0;}
+  .battle-center{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 0;position:relative;z-index:10;flex-shrink:0;}
+  .battle-divider{width:90%;height:2px;background:linear-gradient(90deg,transparent,rgba(200,160,96,0.3),var(--gold),rgba(200,160,96,0.3),transparent);margin:2px 0;}
+  .battle-vs{font-size:1rem;font-weight:900;color:var(--gold);text-shadow:0 0 15px rgba(240,192,64,0.5);letter-spacing:4px;}
+  .battle-pie-wrapper{width:140px;height:140px;display:flex;align-items:center;justify-content:center;position:relative;}
+  .battle-pie-wrapper .pie-chart{width:130px;height:130px;}
+  .battle-pie-wrapper .shatter-container{width:140px;height:140px;}
+  .battle-round{font-size:0.75rem;color:var(--text-dim);font-weight:700;}
+  .battle-flash{position:absolute;top:0;left:0;width:100%;height:50%;pointer-events:none;z-index:20;}
+  .battle-flash.p1{bottom:0;top:auto;}
+  .battle-flash.correct{animation:battle-flash-correct 0.4s ease-out forwards;}
+  .battle-flash.wrong{animation:battle-flash-wrong 0.4s ease-out forwards;}
+  @keyframes battle-flash-correct{0%{background:rgba(52,152,219,0.2)}100%{background:transparent}}
+  @keyframes battle-flash-wrong{0%{background:rgba(192,57,43,0.2)}100%{background:transparent}}
+  .battle-point-float{position:absolute;font-size:1.5rem;font-weight:900;pointer-events:none;z-index:30;animation:battle-point-up 0.8s ease-out forwards;}
+  .battle-point-float.p1{color:#5dade2;bottom:50%;left:50%;transform:translateX(-50%);}
+  .battle-point-float.p2{color:#e74c3c;top:50%;left:50%;transform:translateX(-50%) rotate(180deg);}
+  @keyframes battle-point-up{0%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}100%{opacity:0;transform:translateX(-50%) translateY(-40px) scale(1.3)}}
+  .battle-result-title{font-size:2rem;font-weight:900;text-align:center;line-height:1.3;}
+  .battle-result-title.p1-win{background:linear-gradient(135deg,#3498db,#5dade2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .battle-result-title.p2-win{background:linear-gradient(135deg,#c0392b,#e74c3c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .battle-result-title.draw-result{background:linear-gradient(135deg,var(--gold),var(--sand));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .battle-result-players{display:flex;gap:20px;margin:10px 0;justify-content:center;}
+  .battle-result-card{text-align:center;padding:16px 24px;border-radius:12px;border:2px solid;min-width:140px;}
+  .battle-result-card.p1{border-color:rgba(52,152,219,0.4);background:rgba(52,152,219,0.08);}
+  .battle-result-card.p2{border-color:rgba(192,57,43,0.4);background:rgba(192,57,43,0.08);}
+  .battle-result-card.winner{box-shadow:0 0 20px rgba(240,192,64,0.3);border-color:var(--gold);}
+  .battle-result-label{font-size:0.8rem;font-weight:900;margin-bottom:6px;}
+  .battle-result-card.p1 .battle-result-label{color:#5dade2;}
+  .battle-result-card.p2 .battle-result-label{color:#e74c3c;}
+  .battle-result-score{font-size:2rem;font-weight:900;color:var(--gold);}
+  .battle-result-detail{font-size:0.75rem;color:var(--text-dim);margin-top:4px;}
+  .battle-result-crown{font-size:2.5rem;animation:crown-bounce 0.6s ease infinite alternate;}
+  @keyframes crown-bounce{0%{transform:translateY(0) scale(1)}100%{transform:translateY(-6px) scale(1.1)}}
+  #battleSetupScreen .battle-setup-desc{font-size:0.85rem;color:var(--text-dim);text-align:center;max-width:320px;line-height:1.6;}
+  @media(min-width:768px){
+    .battle-pie-wrapper{width:180px;height:180px;}
+    .battle-pie-wrapper .pie-chart{width:165px;height:165px;}
+    .battle-pie-wrapper .shatter-container{width:180px;height:180px;}
+    .battle-cards{max-width:480px;gap:10px;}
+    .battle-cards .fraction-card{min-height:56px;padding:10px 14px;}
+    .battle-cards .fraction-card .numerator,.battle-cards .fraction-card .denominator{font-size:1.5rem;}
+    .battle-cards .fraction-card .fraction-bar{width:34px;height:3px;}
+    .battle-vs{font-size:1.3rem;}
+    .battle-score{font-size:1.5rem;}
+    .battle-result-title{font-size:2.5rem;}
+    .battle-result-card{padding:20px 32px;min-width:180px;}
+    .battle-result-score{font-size:2.5rem;}
+  }
+  @media(min-width:768px) and (orientation:landscape){
+    .battle-pie-wrapper{width:150px;height:150px;}
+    .battle-pie-wrapper .pie-chart{width:138px;height:138px;}
+    .battle-pie-wrapper .shatter-container{width:150px;height:150px;}
+    .battle-center{flex-direction:row;gap:16px;padding:4px 0;}
+    .battle-cards{max-width:360px;}
+    .battle-side{padding:4px 16px;}
+  }
+
   /* Desert silhouette decoration */
   .desert-silhouette{position:fixed;bottom:0;left:0;width:100%;height:120px;pointer-events:none;z-index:1;opacity:0.12;}
   .desert-silhouette svg{width:100%;height:100%;}
@@ -311,6 +420,7 @@
       <button class="mode-tab t-gunman" id="modeTabGunman" onclick="switchMode('gunman')">🔫 ガンマンモード</button>
     </div>
     <div class="mode-desc" id="modeDesc">10問チャレンジ！じっくり正確に答えよう</div>
+    <button class="ranking-btn-big" style="background:linear-gradient(135deg,rgba(52,152,219,0.15),rgba(192,57,43,0.15));border-image:linear-gradient(135deg,#3498db,#c0392b) 1;animation:none;" onclick="showBattleSetup()">⚔️ 決闘モード（2人対戦）</button>
     <div style="color:var(--text-dim);font-size:0.9rem;font-weight:700;">難易度をえらぼう 🌵</div>
     <div class="diff-buttons">
       <button class="diff-btn easy" onclick="startGame('easy')"><span class="diff-label">🌱 かんたん</span><span class="diff-desc">1/2, 1/3, 3/4 など</span></button>
@@ -418,6 +528,68 @@
     </div>
   </div>
   <div class="cards-area" id="cardsArea"></div>
+</div>
+<!-- Battle Setup Screen -->
+<div class="screen-overlay hidden" id="battleSetupScreen" style="z-index:210;">
+  <div class="screen-title">⚔️ 決闘モード</div>
+  <div class="battle-setup-desc">1台のタブレットで向かい合って対決！<br>同じ問題に早押しで挑め！💥</div>
+  <div style="color:var(--text-dim);font-size:0.9rem;font-weight:700;margin-top:8px;">難易度をえらぼう 🌵</div>
+  <div class="diff-buttons">
+    <button class="diff-btn easy" onclick="startBattle('easy')"><span class="diff-label">🌱 かんたん</span><span class="diff-desc">1/2, 1/3, 3/4 など</span></button>
+    <button class="diff-btn normal" onclick="startBattle('normal')"><span class="diff-label">⚡ ふつう</span><span class="diff-desc">2/5, 3/8, 7/10 など</span></button>
+    <button class="diff-btn hard" onclick="startBattle('hard')"><span class="diff-label">🔥 むずかしい</span><span class="diff-desc">7/16, 11/20, 約分も</span></button>
+  </div>
+  <button class="btn" style="padding:10px 30px;font-size:1rem;" onclick="hideBattleSetup()">もどる</button>
+</div>
+<!-- Battle Container -->
+<div class="battle-container hidden" id="battleContainer">
+  <div class="battle-side p2" id="battleSideP2">
+    <div class="battle-header">
+      <span class="battle-player-label p2-label">P2</span>
+      <div class="battle-score">⭐ <span id="battleP2Score">0</span></div>
+      <div class="battle-combo" id="battleP2Combo">🔥 x0</div>
+    </div>
+    <div class="battle-cards" id="p2Cards"></div>
+  </div>
+  <div class="battle-center">
+    <div class="battle-divider"></div>
+    <div class="battle-vs" id="battleVsText">VS</div>
+    <div class="battle-pie-wrapper">
+      <div class="pie-chart" id="battlePieChart"><canvas id="battlePieCanvas" width="400" height="400"></canvas></div>
+      <div class="shatter-container" id="battleShatterContainer"></div>
+    </div>
+    <div class="battle-round" id="battleRound">Round 1 / 10</div>
+    <div class="battle-divider"></div>
+  </div>
+  <div class="battle-side p1" id="battleSideP1">
+    <div class="battle-cards" id="p1Cards"></div>
+    <div class="battle-header">
+      <span class="battle-player-label p1-label">P1</span>
+      <div class="battle-score">⭐ <span id="battleP1Score">0</span></div>
+      <div class="battle-combo" id="battleP1Combo">🔥 x0</div>
+    </div>
+  </div>
+</div>
+<!-- Battle Result Screen -->
+<div class="screen-overlay hidden" id="battleResultScreen" style="z-index:220;">
+  <div class="battle-result-crown" id="battleCrown">👑</div>
+  <div class="battle-result-title" id="battleResultTitle">P1 の勝ち！</div>
+  <div class="battle-result-players">
+    <div class="battle-result-card p1" id="battleResultP1">
+      <div class="battle-result-label">🔵 P1</div>
+      <div class="battle-result-score" id="battleResultP1Score">0</div>
+      <div class="battle-result-detail" id="battleResultP1Detail">正解: 0 / 正解率: 0%</div>
+    </div>
+    <div class="battle-result-card p2" id="battleResultP2">
+      <div class="battle-result-label">🔴 P2</div>
+      <div class="battle-result-score" id="battleResultP2Score">0</div>
+      <div class="battle-result-detail" id="battleResultP2Detail">正解: 0 / 正解率: 0%</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:12px;margin-top:10px;">
+    <button class="btn" style="padding:12px 28px;font-size:1rem;background:linear-gradient(135deg,#2a6b3a,#1e5a2e);border-color:#3a8b4a;" onclick="startBattle(battleState.mode)">⚔️ もう一回！</button>
+    <button class="btn" style="padding:12px 28px;font-size:1rem;" onclick="battleGoHome()">🏠 HOME</button>
+  </div>
 </div>
 <div class="result-popup" id="resultPopup"></div>
 <!-- LINE confirm -->
@@ -1269,6 +1441,282 @@ loadRankings();
 updateAltBadge();
 // LINE name input listener
 document.getElementById('lineNameInput').addEventListener('input', updateLineReportBtn);
+
+// ===================== BATTLE MODE =====================
+const battleState = {
+  p1: { score:0, combo:0, maxCombo:0, correct:0, attempts:0 },
+  p2: { score:0, combo:0, maxCombo:0, correct:0, attempts:0 },
+  currentAnswer: null,
+  round: 0,
+  totalRounds: 10,
+  isAnimating: false,
+  mode: 'easy',
+  answered: null,
+  active: false,
+};
+
+function showBattleSetup() {
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('battleSetupScreen').classList.remove('hidden');
+}
+
+function hideBattleSetup() {
+  document.getElementById('battleSetupScreen').classList.add('hidden');
+  document.getElementById('startScreen').classList.remove('hidden');
+}
+
+function getBattlePool() {
+  return battleState.mode==='easy'?easyPool:battleState.mode==='normal'?normalPool:hardPool;
+}
+function getBattleNumDummies() {
+  return battleState.mode==='easy'?3:battleState.mode==='normal'?4:5;
+}
+
+function startBattle(diff) {
+  battleState.mode = diff;
+  battleState.round = 0;
+  battleState.isAnimating = false;
+  battleState.answered = null;
+  battleState.active = true;
+  battleState.p1 = { score:0, combo:0, maxCombo:0, correct:0, attempts:0 };
+  battleState.p2 = { score:0, combo:0, maxCombo:0, correct:0, attempts:0 };
+
+  document.getElementById('battleSetupScreen').classList.add('hidden');
+  document.getElementById('battleResultScreen').classList.add('hidden');
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('battleContainer').classList.remove('hidden');
+  setAltBadgeVisible(false);
+
+  updateBattleScores();
+  battleNextRound();
+}
+
+function updateBattleScores() {
+  document.getElementById('battleP1Score').textContent = battleState.p1.score;
+  document.getElementById('battleP2Score').textContent = battleState.p2.score;
+  const c1 = document.getElementById('battleP1Combo');
+  if (battleState.p1.combo >= 2) { c1.textContent = '🔥 x' + battleState.p1.combo; c1.classList.add('active'); }
+  else { c1.classList.remove('active'); }
+  const c2 = document.getElementById('battleP2Combo');
+  if (battleState.p2.combo >= 2) { c2.textContent = '🔥 x' + battleState.p2.combo; c2.classList.add('active'); }
+  else { c2.classList.remove('active'); }
+}
+
+function battleNextRound() {
+  battleState.round++;
+  if (battleState.round > battleState.totalRounds) { endBattle(); return; }
+  battleState.answered = null;
+  battleState.isAnimating = false;
+  document.getElementById('battleRound').textContent = `Round ${battleState.round} / ${battleState.totalRounds}`;
+  document.getElementById('battleVsText').textContent = 'VS';
+  generateBattleQuestion();
+}
+
+function generateBattleQuestion() {
+  const pool = getBattlePool();
+  const numDummies = getBattleNumDummies();
+  const answer = pickRandom(pool);
+  battleState.currentAnswer = answer;
+
+  const dummies = [];
+  let attempts = 0;
+  while (dummies.length < numDummies && attempts < 200) {
+    attempts++;
+    const c = pickRandom(pool);
+    if (!fractionsEqual(c, answer) && !dummies.some(d => fractionsEqual(d, c))) dummies.push(c);
+  }
+  const allPools = [...easyPool, ...normalPool, ...hardPool];
+  while (dummies.length < numDummies) {
+    const c = pickRandom(allPools);
+    if (!fractionsEqual(c, answer) && !dummies.some(d => fractionsEqual(d, c))) dummies.push(c);
+  }
+  const options = shuffle([answer, ...dummies]);
+
+  // Draw pie chart
+  const canvas = document.getElementById('battlePieCanvas');
+  const pieEl = document.getElementById('battlePieChart');
+  pieEl.style.opacity = '1'; pieEl.style.transform = 'scale(1)';
+  pieEl.classList.remove('entering'); void pieEl.offsetWidth;
+  pieEl.style.animationDuration = '0.2s';
+  pieEl.classList.add('entering');
+  // Use existing drawPieChart with temporary state override
+  const origMode = state.mode;
+  state.mode = battleState.mode;
+  drawPieChart(canvas, answer);
+  state.mode = origMode;
+
+  // Render cards for both players (same options, different order for fairness)
+  const p1Options = shuffle([...options]);
+  const p2Options = shuffle([...options]);
+  renderBattleCards('p1Cards', p1Options, 'p1');
+  renderBattleCards('p2Cards', p2Options, 'p2');
+}
+
+function renderBattleCards(containerId, options, player) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  options.forEach((frac, idx) => {
+    const card = document.createElement('div');
+    card.className = 'fraction-card';
+    card.innerHTML = `<span class="numerator">${frac.n}</span><div class="fraction-bar"></div><span class="denominator">${frac.d}</span>`;
+    const handler = (e) => { e.preventDefault(); e.stopPropagation(); battleAnswer(player, frac, card); };
+    card.addEventListener('click', handler);
+    card.addEventListener('touchend', handler);
+    container.appendChild(card);
+    card.style.opacity = '0'; card.style.transform = 'translateY(10px)';
+    setTimeout(() => {
+      card.style.transition = 'opacity 0.15s ease,transform 0.15s ease,box-shadow 0.2s,border-color 0.2s,background 0.2s';
+      card.style.opacity = '1'; card.style.transform = 'translateY(0)';
+    }, 20 + idx * 25);
+  });
+}
+
+function battleAnswer(player, frac, card) {
+  if (battleState.isAnimating || !battleState.active) return;
+  if (battleState.answered) return; // Only first answer counts per round
+
+  const ps = battleState[player];
+  ps.attempts++;
+  const isCorrect = fractionsEqual(frac, battleState.currentAnswer);
+
+  if (isCorrect) {
+    battleState.answered = player;
+    battleState.isAnimating = true;
+    ps.combo++;
+    if (ps.combo > ps.maxCombo) ps.maxCombo = ps.combo;
+    ps.correct++;
+    const points = 100 * Math.max(1, battleState.round);
+    ps.score += points;
+
+    // Reset other player's combo
+    const other = player === 'p1' ? 'p2' : 'p1';
+    battleState[other].combo = 0;
+
+    updateBattleScores();
+    battleShatterPie();
+
+    // Show point float
+    const floatEl = document.createElement('div');
+    floatEl.className = 'battle-point-float ' + player;
+    floatEl.textContent = `+${points}`;
+    document.getElementById('battleContainer').appendChild(floatEl);
+    setTimeout(() => floatEl.remove(), 850);
+
+    // Flash effect
+    const flashEl = document.createElement('div');
+    flashEl.className = 'battle-flash correct ' + player;
+    document.getElementById('battleContainer').appendChild(flashEl);
+    setTimeout(() => flashEl.remove(), 450);
+
+    // Disable all cards
+    document.querySelectorAll('#p1Cards .fraction-card, #p2Cards .fraction-card').forEach(c => c.classList.add('disabled'));
+
+    // Show who answered
+    document.getElementById('battleVsText').textContent = player === 'p1' ? '🔵 P1 💥' : '🔴 P2 💥';
+
+    setTimeout(() => {
+      if (!battleState.active) return;
+      battleNextRound();
+    }, 800);
+  } else {
+    // Wrong answer - disable only this card, penalize player
+    card.classList.add('disabled');
+    ps.combo = 0;
+    updateBattleScores();
+
+    // Flash wrong
+    const flashEl = document.createElement('div');
+    flashEl.className = 'battle-flash wrong ' + player;
+    document.getElementById('battleContainer').appendChild(flashEl);
+    setTimeout(() => flashEl.remove(), 450);
+
+    // Brief lock for this player's cards
+    const containerId = player + 'Cards';
+    const cards = document.querySelectorAll('#' + containerId + ' .fraction-card:not(.disabled)');
+    cards.forEach(c => { c.style.pointerEvents = 'none'; });
+    setTimeout(() => {
+      cards.forEach(c => { c.style.pointerEvents = ''; });
+    }, 500);
+
+    // If both players have exhausted all wrong options (no correct card visible), move on
+    const p1Wrong = document.querySelectorAll('#p1Cards .fraction-card.disabled').length;
+    const p2Wrong = document.querySelectorAll('#p2Cards .fraction-card.disabled').length;
+    const totalCards = document.querySelectorAll('#p1Cards .fraction-card').length;
+    if (p1Wrong >= totalCards - 1 && p2Wrong >= totalCards - 1) {
+      // Both locked out on all wrong cards, just advance
+      battleState.isAnimating = true;
+      setTimeout(() => { if (battleState.active) battleNextRound(); }, 600);
+    }
+  }
+}
+
+function battleShatterPie() {
+  const container = document.getElementById('battleShatterContainer');
+  const canvas = document.getElementById('battlePieCanvas');
+  const pieEl = document.getElementById('battlePieChart');
+  const imgData = canvas.toDataURL();
+  pieEl.style.opacity = '0'; pieEl.style.transform = 'scale(0.7)';
+  const cw = 140;
+  for (let i = 0; i < 8; i++) {
+    const shard = document.createElement('div'); shard.className = 'shard';
+    const angle = (i / 8) * Math.PI * 2, dist = 40 + Math.random() * 60;
+    const tx = Math.cos(angle) * dist, ty = Math.sin(angle) * dist;
+    const rot = (Math.random() - 0.5) * 720, size = 16 + Math.random() * 25;
+    const half = cw / 2;
+    const ox = half + Math.cos(angle) * 20 - size / 2, oy = half + Math.sin(angle) * 20 - size / 2;
+    const pts = []; for (let j = 0; j < 4 + Math.floor(Math.random() * 3); j++) pts.push(`${Math.random()*100}% ${Math.random()*100}%`);
+    shard.style.cssText = `left:${ox}px;top:${oy}px;width:${size}px;height:${size}px;background-image:url(${imgData});background-size:${cw}px ${cw}px;background-position:-${ox}px -${oy}px;clip-path:polygon(${pts.join(',')});--tx:${tx}px;--ty:${ty}px;--rot:${rot}deg;animation:shard-fly 0.4s ease-out forwards;`;
+    container.appendChild(shard);
+  }
+  setTimeout(() => { container.innerHTML = ''; }, 500);
+}
+
+function endBattle() {
+  battleState.active = false;
+  document.getElementById('battleContainer').classList.add('hidden');
+
+  const p1 = battleState.p1, p2 = battleState.p2;
+  const titleEl = document.getElementById('battleResultTitle');
+  const crownEl = document.getElementById('battleCrown');
+
+  if (p1.score > p2.score) {
+    titleEl.textContent = '🔵 P1 の勝ち！';
+    titleEl.className = 'battle-result-title p1-win';
+    crownEl.textContent = '👑';
+    document.getElementById('battleResultP1').classList.add('winner');
+    document.getElementById('battleResultP2').classList.remove('winner');
+  } else if (p2.score > p1.score) {
+    titleEl.textContent = '🔴 P2 の勝ち！';
+    titleEl.className = 'battle-result-title p2-win';
+    crownEl.textContent = '👑';
+    document.getElementById('battleResultP2').classList.add('winner');
+    document.getElementById('battleResultP1').classList.remove('winner');
+  } else {
+    titleEl.textContent = '引き分け！';
+    titleEl.className = 'battle-result-title draw-result';
+    crownEl.textContent = '🤝';
+    document.getElementById('battleResultP1').classList.remove('winner');
+    document.getElementById('battleResultP2').classList.remove('winner');
+  }
+
+  document.getElementById('battleResultP1Score').textContent = p1.score;
+  const p1Acc = p1.attempts > 0 ? Math.round((p1.correct / p1.attempts) * 100) : 0;
+  document.getElementById('battleResultP1Detail').textContent = `正解: ${p1.correct} / 正解率: ${p1Acc}%`;
+
+  document.getElementById('battleResultP2Score').textContent = p2.score;
+  const p2Acc = p2.attempts > 0 ? Math.round((p2.correct / p2.attempts) * 100) : 0;
+  document.getElementById('battleResultP2Detail').textContent = `正解: ${p2.correct} / 正解率: ${p2Acc}%`;
+
+  document.getElementById('battleResultScreen').classList.remove('hidden');
+  setAltBadgeVisible(true);
+}
+
+function battleGoHome() {
+  document.getElementById('battleResultScreen').classList.add('hidden');
+  document.getElementById('battleContainer').classList.add('hidden');
+  document.getElementById('startScreen').classList.remove('hidden');
+  setAltBadgeVisible(true);
+}
 
 // ===================== BG =====================
 (function(){
