@@ -74,6 +74,7 @@
   .mode-tab.active{color:var(--text);}
   .mode-tab.active.t-normal{background:linear-gradient(135deg,var(--leather),#6b4a2a);}
   .mode-tab.active.t-gunman{background:linear-gradient(135deg,var(--accent),#a0301f);}
+  .mode-tab.active.t-battle{background:linear-gradient(135deg,#8e44ad,#6c3483);}
   .mode-desc{font-size:0.75rem;color:var(--text-dim);text-align:center;max-width:320px;margin-bottom:2px;}
   .diff-buttons{display:flex;gap:12px;margin-top:6px;flex-wrap:wrap;justify-content:center;}
   .diff-btn{border:2px solid;padding:14px 28px;border-radius:10px;font-size:1rem;font-weight:900;font-family:'Zen Maru Gothic',sans-serif;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:110px;box-shadow:0 4px 15px rgba(0,0,0,0.4);}
@@ -168,7 +169,7 @@
     .pie-chart{width:260px;height:260px;border-width:4px;}
     .shatter-container{width:280px;height:280px;}
     .cards-area{max-width:900px;gap:14px;padding:10px 32px 32px;}
-    .fraction-card{padding:14px 22px;min-width:80px;border-radius:12px;border-width:3px;}
+    .fraction-card{padding:14px 22px;min-width:80px;min-height:56px;border-radius:12px;border-width:3px;}
     .fraction-card .numerator,.fraction-card .denominator{font-size:1.8rem;}
     .fraction-card .fraction-bar{width:40px;height:4px;margin:4px 0;}
     .screen-overlay{gap:18px;}
@@ -416,11 +417,11 @@
     <div class="screen-title">🤠 分数ガンマン</div>
     <div class="screen-subtitle">円グラフに合う分数カードを<br>クリック一発で撃ち抜け！💥</div>
     <div class="mode-tabs">
-      <button class="mode-tab t-normal active" id="modeTabNormal" onclick="switchMode('normal')">📝 通常モード</button>
-      <button class="mode-tab t-gunman" id="modeTabGunman" onclick="switchMode('gunman')">🔫 ガンマンモード</button>
+      <button class="mode-tab t-normal active" id="modeTabNormal" onclick="switchMode('normal')">📝 通常</button>
+      <button class="mode-tab t-gunman" id="modeTabGunman" onclick="switchMode('gunman')">🔫 ガンマン</button>
+      <button class="mode-tab t-battle" id="modeTabBattle" onclick="switchMode('battle')">⚔️ 対戦</button>
     </div>
     <div class="mode-desc" id="modeDesc">10問チャレンジ！じっくり正確に答えよう</div>
-    <button class="ranking-btn-big" style="background:linear-gradient(135deg,rgba(52,152,219,0.15),rgba(192,57,43,0.15));border-image:linear-gradient(135deg,#3498db,#c0392b) 1;animation:none;" onclick="showBattleSetup()">⚔️ 決闘モード（2人対戦）</button>
     <div style="color:var(--text-dim);font-size:0.9rem;font-weight:700;">難易度をえらぼう 🌵</div>
     <div class="diff-buttons">
       <button class="diff-btn easy" onclick="startGame('easy')"><span class="diff-label">🌱 かんたん</span><span class="diff-desc">1/2, 1/3, 3/4 など</span></button>
@@ -862,10 +863,15 @@ function subtractTime(seconds) {
 
 // ===================== MODE SWITCH (start screen) =====================
 function switchMode(mode) {
+  if (mode === 'battle') {
+    showBattleSetup();
+    return;
+  }
   selectedGameMode = mode;
   // Sync all mode tabs (start screen + game over screen)
   document.getElementById('modeTabNormal').classList.toggle('active', mode==='normal');
   document.getElementById('modeTabGunman').classList.toggle('active', mode==='gunman');
+  document.getElementById('modeTabBattle').classList.remove('active');
   document.getElementById('modeTabNormal2').classList.toggle('active', mode==='normal');
   document.getElementById('modeTabGunman2').classList.toggle('active', mode==='gunman');
   document.getElementById('modeDesc').textContent = mode==='normal'
@@ -1456,6 +1462,10 @@ const battleState = {
 };
 
 function showBattleSetup() {
+  // Mark battle tab as active
+  document.getElementById('modeTabNormal').classList.remove('active');
+  document.getElementById('modeTabGunman').classList.remove('active');
+  document.getElementById('modeTabBattle').classList.add('active');
   document.getElementById('startScreen').classList.add('hidden');
   document.getElementById('battleSetupScreen').classList.remove('hidden');
 }
@@ -1463,6 +1473,10 @@ function showBattleSetup() {
 function hideBattleSetup() {
   document.getElementById('battleSetupScreen').classList.add('hidden');
   document.getElementById('startScreen').classList.remove('hidden');
+  // Reset battle tab to inactive, restore previous selected mode tab
+  document.getElementById('modeTabBattle').classList.remove('active');
+  document.getElementById('modeTabNormal').classList.toggle('active', selectedGameMode==='normal');
+  document.getElementById('modeTabGunman').classList.toggle('active', selectedGameMode==='gunman');
 }
 
 function getBattlePool() {
