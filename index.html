@@ -4,11 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>分数ガンマン 🤠</title>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://trail-game-pro-3-2.onrender.com/games/shared/trail-auth.css">
+<script src="https://trail-game-pro-3-2.onrender.com/js/trail-sdk.js"></script>
+<script src="https://trail-game-pro-3-2.onrender.com/games/shared/trail-auth.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&display=swap');
   *{margin:0;padding:0;box-sizing:border-box;}
   :root{--bg:#1c1008;--sand:#d4a654;--leather:#8b5e3c;--wood:#6b3a1f;--gold:#f0c040;--accent:#c0392b;--success:#27ae60;--text:#f5e6d0;--text-dim:#a08060;--rope:#c8a060;}
-  body{font-family:'Zen Maru Gothic',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;}
+  body{font-family:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;}
   .game-container{width:100vw;height:100vh;display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden;background:linear-gradient(180deg,#1c1008 0%,#2a1a0e 40%,#3a2510 70%,#1c1008 100%);}
   .bg-particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
   .bg-particle{position:absolute;border-radius:50%;animation:dust-drift 10s ease-in-out infinite;}
@@ -23,7 +27,7 @@
   .combo-display{font-size:0.85rem;color:var(--gold);font-weight:700;opacity:0;transition:opacity 0.3s;}
   .combo-display.active{opacity:1;animation:combo-pulse 0.4s ease;}
   @keyframes combo-pulse{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
-  .quit-btn{background:none;border:1.5px solid rgba(200,160,96,0.25);color:var(--text-dim);padding:3px 10px;border-radius:8px;font-size:0.65rem;font-weight:700;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;transition:all 0.2s;white-space:nowrap;}
+  .quit-btn{background:none;border:1.5px solid rgba(200,160,96,0.25);color:var(--text-dim);padding:3px 10px;border-radius:8px;font-size:0.65rem;font-weight:700;cursor:pointer;font-family:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif;transition:all 0.2s;white-space:nowrap;}
   .quit-btn:hover{border-color:var(--accent);color:var(--accent);}
   .timer-area{width:100%;max-width:700px;padding:4px 20px;z-index:10;display:flex;align-items:center;gap:10px;}
   .timer-bar-track{flex:1;height:12px;background:rgba(200,160,96,0.1);border-radius:6px;overflow:hidden;border:1px solid rgba(200,160,96,0.15);}
@@ -70,21 +74,21 @@
   .screen-title{font-size:2.2rem;font-weight:900;background:linear-gradient(135deg,var(--gold),#e8a020,var(--sand));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;line-height:1.3;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));}
   .screen-subtitle{font-size:0.95rem;color:var(--text-dim);text-align:center;max-width:360px;line-height:1.7;}
   .mode-tabs{display:flex;gap:0;margin-bottom:4px;border-radius:10px;overflow:hidden;border:2px solid rgba(200,160,96,0.2);}
-  .mode-tab{padding:10px 28px;font-size:0.95rem;font-weight:900;cursor:pointer;border:none;font-family:'Zen Maru Gothic',sans-serif;transition:all 0.2s;background:rgba(200,160,96,0.05);color:var(--text-dim);}
+  .mode-tab{padding:10px 28px;font-size:0.95rem;font-weight:900;cursor:pointer;border:none;font-family:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif;transition:all 0.2s;background:rgba(200,160,96,0.05);color:var(--text-dim);}
   .mode-tab.active{color:var(--text);}
   .mode-tab.active.t-normal{background:linear-gradient(135deg,var(--leather),#6b4a2a);}
   .mode-tab.active.t-gunman{background:linear-gradient(135deg,var(--accent),#a0301f);}
   .mode-tab.active.t-battle{background:linear-gradient(135deg,#8e44ad,#6c3483);}
   .mode-desc{font-size:0.75rem;color:var(--text-dim);text-align:center;max-width:320px;margin-bottom:2px;}
   .diff-buttons{display:flex;gap:12px;margin-top:6px;flex-wrap:wrap;justify-content:center;}
-  .diff-btn{border:2px solid;padding:14px 28px;border-radius:10px;font-size:1rem;font-weight:900;font-family:'Zen Maru Gothic',sans-serif;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:110px;box-shadow:0 4px 15px rgba(0,0,0,0.4);}
+  .diff-btn{border:2px solid;padding:14px 28px;border-radius:10px;font-size:1rem;font-weight:900;font-family:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:110px;box-shadow:0 4px 15px rgba(0,0,0,0.4);}
   .diff-btn:hover{transform:translateY(-3px) scale(1.05);}
   .diff-btn:active{transform:scale(0.96);}
   .diff-btn .diff-label{font-size:1.1rem;} .diff-btn .diff-desc{font-size:0.65rem;opacity:0.8;}
   .diff-btn.easy{background:linear-gradient(135deg,#2a6b3a,#1e5a2e);color:#7ddf90;border-color:#3a8b4a;}
   .diff-btn.normal{background:linear-gradient(135deg,#6b5020,#5a4018);color:var(--gold);border-color:var(--sand);}
   .diff-btn.hard{background:linear-gradient(135deg,#6b1a10,#5a1510);color:#ff8070;border-color:#8b3020;}
-  .btn{background:linear-gradient(135deg,var(--leather),var(--wood));color:var(--text);border:2px solid var(--rope);padding:14px 40px;border-radius:12px;font-size:1.15rem;font-weight:900;font-family:'Zen Maru Gothic',sans-serif;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 6px 20px rgba(0,0,0,0.4);margin-top:4px;}
+  .btn{background:linear-gradient(135deg,var(--leather),var(--wood));color:var(--text);border:2px solid var(--rope);padding:14px 40px;border-radius:12px;font-size:1.15rem;font-weight:900;font-family:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 6px 20px rgba(0,0,0,0.4);margin-top:4px;}
   .btn:hover{transform:translateY(-2px) scale(1.04);} .btn:active{transform:scale(0.97);}
   .result-popup{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%);font-size:2rem;font-weight:900;z-index:100;pointer-events:none;opacity:0;white-space:nowrap;}
   .result-popup.correct{color:var(--gold);animation:popup-correct 0.9s ease forwards;text-shadow:0 0 20px rgba(240,192,64,0.5);}
@@ -95,28 +99,28 @@
   .stat-value{font-size:1.8rem;font-weight:900;color:var(--gold);}
   .stat-label{font-size:0.75rem;color:var(--text-dim);margin-top:2px;}
   .name-entry-form{display:flex;flex-direction:column;align-items:center;gap:10px;}
-  .name-input{background:rgba(200,160,96,0.08);border:2px solid rgba(200,160,96,0.25);border-radius:10px;padding:8px 14px;font-size:1rem;font-family:'Zen Maru Gothic',sans-serif;color:var(--text);outline:none;width:180px;text-align:center;}
+  .name-input{background:rgba(200,160,96,0.08);border:2px solid rgba(200,160,96,0.25);border-radius:10px;padding:8px 14px;font-size:1rem;font-family:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif;color:var(--text);outline:none;width:180px;text-align:center;}
   .name-input:focus{border-color:var(--gold);} .name-input::placeholder{color:rgba(200,160,96,0.3);}
   .grade-selector{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;}
-  .grade-btn{padding:5px 12px;border-radius:8px;border:2px solid rgba(200,160,96,0.2);background:rgba(200,160,96,0.05);color:var(--text-dim);font-size:0.75rem;font-weight:700;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;transition:all 0.15s;}
+  .grade-btn{padding:5px 12px;border-radius:8px;border:2px solid rgba(200,160,96,0.2);background:rgba(200,160,96,0.05);color:var(--text-dim);font-size:0.75rem;font-weight:700;cursor:pointer;font-family:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif;transition:all 0.15s;}
   .grade-btn:hover{border-color:rgba(200,160,96,0.4);color:var(--sand);}
   .grade-btn.selected{border-color:var(--gold);color:var(--gold);background:rgba(240,192,64,0.1);box-shadow:0 0 10px rgba(240,192,64,0.15);}
-  .ranking-btn-big{background:linear-gradient(135deg,rgba(240,192,64,0.15),rgba(240,192,64,0.05));border:2px solid var(--gold);color:var(--gold);padding:12px 28px;border-radius:12px;font-size:1rem;font-weight:900;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;transition:all 0.2s;box-shadow:0 0 15px rgba(240,192,64,0.1);animation:ranking-glow 2s ease-in-out infinite alternate;}
+  .ranking-btn-big{background:linear-gradient(135deg,rgba(240,192,64,0.15),rgba(240,192,64,0.05));border:2px solid var(--gold);color:var(--gold);padding:12px 28px;border-radius:12px;font-size:1rem;font-weight:900;cursor:pointer;font-family:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif;transition:all 0.2s;box-shadow:0 0 15px rgba(240,192,64,0.1);animation:ranking-glow 2s ease-in-out infinite alternate;}
   .ranking-btn-big:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 0 25px rgba(240,192,64,0.25);}
   @keyframes ranking-glow{0%{box-shadow:0 0 10px rgba(240,192,64,0.08)}100%{box-shadow:0 0 20px rgba(240,192,64,0.2)}}
-  .ranking-btn{background:none;border:2px solid rgba(200,160,96,0.2);color:var(--text-dim);padding:7px 18px;border-radius:10px;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;transition:all 0.2s;}
+  .ranking-btn{background:none;border:2px solid rgba(200,160,96,0.2);color:var(--text-dim);padding:7px 18px;border-radius:10px;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif;transition:all 0.2s;}
   .ranking-btn:hover{border-color:var(--gold);color:var(--gold);}
   .ranking-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,8,2,0.96);backdrop-filter:blur(10px);display:flex;flex-direction:column;align-items:center;z-index:250;gap:8px;overflow-y:auto;padding:20px 0;}
   .ranking-overlay.hidden{display:none;}
   .ranking-period-tabs{display:flex;gap:0;border-radius:10px;overflow:hidden;border:2px solid rgba(200,160,96,0.2);margin-bottom:2px;}
-  .ranking-period-tab{padding:8px 20px;font-size:0.8rem;font-weight:900;cursor:pointer;border:none;font-family:'Zen Maru Gothic',sans-serif;transition:all 0.2s;background:rgba(200,160,96,0.05);color:var(--text-dim);}
+  .ranking-period-tab{padding:8px 20px;font-size:0.8rem;font-weight:900;cursor:pointer;border:none;font-family:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif;transition:all 0.2s;background:rgba(200,160,96,0.05);color:var(--text-dim);}
   .ranking-period-tab.active.t-weekly{color:#ff9040;background:linear-gradient(135deg,rgba(255,144,64,0.2),rgba(192,57,43,0.15));border-color:rgba(255,144,64,0.3);}
   .ranking-period-tab.active.t-alltime{color:var(--gold);background:linear-gradient(135deg,rgba(240,192,64,0.2),rgba(200,160,96,0.15));border-color:rgba(240,192,64,0.3);}
   .ranking-mode-tabs{display:flex;gap:0;border-radius:10px;overflow:hidden;border:2px solid rgba(200,160,96,0.15);}
-  .ranking-mode-tab{padding:6px 20px;font-size:0.8rem;font-weight:900;cursor:pointer;border:none;font-family:'Zen Maru Gothic',sans-serif;transition:all 0.2s;background:rgba(200,160,96,0.05);color:var(--text-dim);}
+  .ranking-mode-tab{padding:6px 20px;font-size:0.8rem;font-weight:900;cursor:pointer;border:none;font-family:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif;transition:all 0.2s;background:rgba(200,160,96,0.05);color:var(--text-dim);}
   .ranking-mode-tab.active{color:var(--text);background:linear-gradient(135deg,var(--leather),#6b4a2a);}
   .ranking-tabs{display:flex;gap:8px;}
-  .ranking-tab{padding:6px 18px;border-radius:8px;border:1px solid rgba(200,160,96,0.15);font-size:0.9rem;font-weight:900;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;background:rgba(200,160,96,0.05);color:var(--text-dim);transition:all 0.2s;}
+  .ranking-tab{padding:6px 18px;border-radius:8px;border:1px solid rgba(200,160,96,0.15);font-size:0.9rem;font-weight:900;cursor:pointer;font-family:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif;background:rgba(200,160,96,0.05);color:var(--text-dim);transition:all 0.2s;}
   .ranking-tab.active{color:var(--text);}
   .ranking-tab.active.t-easy{background:rgba(39,174,96,0.25);border-color:rgba(39,174,96,0.4);color:#7ddf90;}
   .ranking-tab.active.t-normal{background:rgba(240,192,64,0.2);border-color:rgba(240,192,64,0.4);color:var(--gold);}
@@ -357,7 +361,7 @@
 
   /* BANG effect */
   .bang-effect{position:fixed;top:38%;left:50%;transform:translate(-50%,-50%);z-index:150;pointer-events:none;animation:bang-pop 0.7s ease-out forwards;}
-  .bang-text{font-size:4rem;font-weight:900;color:var(--accent);text-shadow:0 0 30px rgba(192,57,43,0.8),0 0 60px rgba(240,192,64,0.4),3px 3px 0 #1c1008;letter-spacing:4px;font-family:'Zen Maru Gothic',sans-serif;}
+  .bang-text{font-size:4rem;font-weight:900;color:var(--accent);text-shadow:0 0 30px rgba(192,57,43,0.8),0 0 60px rgba(240,192,64,0.4),3px 3px 0 #1c1008;letter-spacing:4px;font-family:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif;}
   @keyframes bang-pop{0%{opacity:0;transform:translate(-50%,-50%) scale(0.2) rotate(-10deg)}10%{opacity:1;transform:translate(-50%,-50%) scale(1.4) rotate(3deg)}30%{transform:translate(-50%,-50%) scale(1) rotate(-1deg)}60%{opacity:1;transform:translate(-50%,-50%) scale(1.05) rotate(0)}100%{opacity:0;transform:translate(-50%,-50%) scale(0.8) rotate(0)}}
 
   /* Tumbleweed */
@@ -368,7 +372,7 @@
   .draw-overlay{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:160;animation:draw-dim 1.2s ease-out forwards;}
   @keyframes draw-dim{0%{background:rgba(0,0,0,0)}15%{background:rgba(0,0,0,0.5)}70%{background:rgba(0,0,0,0.4)}100%{background:rgba(0,0,0,0)}}
   .draw-text{position:fixed;top:42%;left:50%;transform:translate(-50%,-50%);z-index:161;pointer-events:none;animation:draw-appear 1.2s ease-out forwards;}
-  .draw-text span{font-size:2.8rem;font-weight:900;color:#888;font-family:'Zen Maru Gothic',sans-serif;text-shadow:0 2px 10px rgba(0,0,0,0.8);letter-spacing:6px;}
+  .draw-text span{font-size:2.8rem;font-weight:900;color:#888;font-family:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif;text-shadow:0 2px 10px rgba(0,0,0,0.8);letter-spacing:6px;}
   .draw-text .draw-sub{display:block;font-size:0.9rem;color:var(--accent);letter-spacing:2px;margin-top:4px;text-align:center;}
   @keyframes draw-appear{0%{opacity:0;transform:translate(-50%,-50%) scale(0.8)}10%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}30%{transform:translate(-50%,-50%) scale(1)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(0.95)}}
 
@@ -397,10 +401,10 @@
   /* LINE report section */
   .line-report-section{width:100%;max-width:340px;margin-top:12px;padding:14px;border-radius:12px;background:rgba(200,160,96,0.06);border:1px solid rgba(200,160,96,0.15);}
   .line-report-title{font-size:0.85rem;font-weight:900;color:var(--sand);margin-bottom:8px;text-align:center;}
-  .line-name-input{width:100%;background:rgba(200,160,96,0.08);border:2px solid rgba(200,160,96,0.2);border-radius:8px;padding:7px 12px;font-size:0.9rem;font-family:'Zen Maru Gothic',sans-serif;color:var(--text);outline:none;text-align:center;margin-bottom:8px;}
+  .line-name-input{width:100%;background:rgba(200,160,96,0.08);border:2px solid rgba(200,160,96,0.2);border-radius:8px;padding:7px 12px;font-size:0.9rem;font-family:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif;color:var(--text);outline:none;text-align:center;margin-bottom:8px;}
   .line-name-input:focus{border-color:var(--gold);}
   .line-name-input::placeholder{color:rgba(200,160,96,0.3);}
-  .line-report-btn{width:100%;padding:10px;border-radius:10px;border:2px solid #06c755;background:linear-gradient(135deg,#06c755,#04a847);color:#fff;font-size:0.95rem;font-weight:900;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;transition:all 0.2s;}
+  .line-report-btn{width:100%;padding:10px;border-radius:10px;border:2px solid #06c755;background:linear-gradient(135deg,#06c755,#04a847);color:#fff;font-size:0.95rem;font-weight:900;cursor:pointer;font-family:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif;transition:all 0.2s;}
   .line-report-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 4px 15px rgba(6,199,85,0.3);}
   .line-report-btn:disabled{opacity:0.3;cursor:not-allowed;filter:grayscale(0.8);}
 
@@ -410,15 +414,54 @@
   .line-confirm-text{font-size:1rem;font-weight:700;color:var(--text);text-align:center;line-height:1.6;}
   .line-confirm-alt{font-size:1.8rem;font-weight:900;color:var(--gold);}
   .line-confirm-btns{display:flex;gap:12px;}
+
+  /* ===== TRAIL Integration Styles ===== */
+  .trail-accent{color:#1a73e8;}
+  .hidden-immediate{display:none!important;}
+  .player-info{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+  .player-name-badge{background:linear-gradient(135deg,rgba(26,115,232,0.15),rgba(26,115,232,0.05));border:2px solid rgba(26,115,232,0.4);color:#5da6ff;padding:6px 16px;border-radius:12px;font-size:0.95rem;font-weight:700;display:flex;align-items:center;gap:6px;}
+  .player-name-badge .player-icon{font-size:1.1rem;}
+  .streak-badge{background:linear-gradient(135deg,rgba(240,192,64,0.15),rgba(240,192,64,0.05));border:2px solid rgba(240,192,64,0.3);color:var(--gold);padding:4px 12px;border-radius:10px;font-size:0.8rem;font-weight:700;}
+  .trail-result-section{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 20px;border-radius:12px;background:rgba(26,115,232,0.06);border:1px solid rgba(26,115,232,0.15);margin:6px 0;}
+  .trail-alt-popup{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:500;background:rgba(10,5,0,0.92);backdrop-filter:blur(10px);animation:trail-popup-in 0.4s ease;}
+  .trail-alt-popup.hidden{display:none;}
+  @keyframes trail-popup-in{0%{opacity:0;transform:scale(0.9)}100%{opacity:1;transform:scale(1)}}
+  .trail-alt-amount{font-size:3rem;font-weight:900;color:var(--gold);text-shadow:0 0 30px rgba(240,192,64,0.5);animation:trail-alt-bounce 0.6s ease;}
+  @keyframes trail-alt-bounce{0%{transform:scale(0.5);opacity:0}50%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
+  .trail-alt-label{font-size:1rem;color:var(--text-dim);margin-top:4px;}
+
+  /* PIN screen styles */
+  #pinScreen{z-index:600;background:var(--bg);}
+  #pinScreen .screen-title{margin-bottom:8px;}
+  .pin-loading{color:var(--text-dim);font-size:0.9rem;margin-top:12px;}
+  .pin-error{color:var(--accent);font-size:0.85rem;margin-top:8px;}
+
+  @media(min-width:768px){
+    .player-name-badge{font-size:1.1rem;padding:8px 20px;border-radius:14px;}
+    .streak-badge{font-size:0.9rem;padding:5px 14px;}
+    .trail-result-section{padding:16px 28px;}
+    .trail-alt-amount{font-size:4rem;}
+  }
 </style>
 </head>
 <body>
+<!-- PIN Authentication Screen -->
+<div class="screen-overlay hidden-immediate" id="pinScreen">
+  <div class="screen-title">🤠 分数ガンマン</div>
+  <div class="screen-subtitle">認証中...</div>
+  <div class="pin-loading" id="pinLoading">TRAIL に接続しています...</div>
+  <div class="pin-error hidden" id="pinError"></div>
+</div>
 <div class="game-container">
   <div class="bg-particles" id="bgParticles"></div>
   <!-- Desert silhouette -->
   <div class="desert-silhouette"><svg viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,120 L0,90 Q50,80 80,85 Q120,60 160,70 L180,72 Q200,30 220,65 L230,68 Q250,55 270,62 Q290,58 310,70 L350,72 Q380,65 400,75 Q430,50 460,68 Q480,40 500,60 L520,65 Q540,55 560,62 Q580,35 610,58 L640,62 Q670,20 700,55 Q720,48 740,58 L760,60 Q800,52 830,65 Q860,45 890,60 L920,62 Q950,50 980,60 Q1010,55 1040,68 Q1070,40 1100,60 Q1130,55 1160,65 L1200,70 L1200,120 Z" fill="#d4a654"/><ellipse cx="150" cy="50" rx="8" ry="35" fill="#d4a654"/><ellipse cx="150" cy="30" rx="15" ry="6" fill="#d4a654"/><ellipse cx="150" cy="45" rx="12" ry="5" fill="#d4a654"/><ellipse cx="850" cy="45" rx="7" ry="40" fill="#d4a654"/><ellipse cx="850" cy="20" rx="13" ry="5" fill="#d4a654"/><ellipse cx="850" cy="38" rx="11" ry="4" fill="#d4a654"/><ellipse cx="835" cy="55" rx="10" ry="4" fill="#d4a654"/></svg></div>
-  <div class="screen-overlay" id="startScreen">
+  <div class="screen-overlay hidden" id="startScreen">
     <div class="screen-title">🤠 分数ガンマン</div>
+    <div class="player-info hidden" id="playerInfo">
+      <div class="player-name-badge"><span class="player-icon">🤠</span><span id="playerNameText">---</span></div>
+      <div class="streak-badge hidden" id="streakBadge">🔥 <span id="streakText">0</span> 連続</div>
+    </div>
     <div class="screen-subtitle">円グラフに合う分数カードを<br>クリック一発で撃ち抜け！💥</div>
     <div class="mode-tabs">
       <button class="mode-tab t-normal active" id="modeTabNormal" onclick="switchMode('normal')">📝 通常</button>
@@ -617,29 +660,108 @@
   </div>
 </div>
 <script>
-// ─── TRAIL ALT・ランキング連携 ───────────────────────────
-const GAS_URL     = 'https://script.google.com/macros/s/AKfycbzKUyiUHIMp9JRFX0LEa88plEoavkbrjTQ5oHf9T-FDd6b4fhqfTCBVBy5rWUZPUQbY/exec';
-const GAME_ID     = 2;
-const GAME_NAME   = '分数ガンマン';
-const SCORE_LABEL = '点';
-const ALT_AMOUNT  = 10;
-const TRAIL_PLAYER = new URLSearchParams(location.search).get('player') || null;
+// ─── TRAIL SDK Integration ───────────────────────────────
+const GAME_ID = 2;
+let trailSDK = null;
+let trailPlayerName = null;
+let trailReady = false;
 
-let _trailResultSent = false;
-async function sendResult(score) {
-  if (!TRAIL_PLAYER || _trailResultSent) return;
-  _trailResultSent = true;
-  const opt = { method:'POST', redirect:'follow', headers:{'Content-Type':'text/plain'} };
-  await fetch(GAS_URL, { ...opt, body: JSON.stringify({
-    action: 'saveRanking',
-    gameId: GAME_ID, gameName: GAME_NAME,
-    player: TRAIL_PLAYER, score: score, scoreLabel: SCORE_LABEL
-  })});
-  await fetch(GAS_URL, { ...opt, body: JSON.stringify({
-    action: 'addCoin',
-    player: TRAIL_PLAYER, gameId: GAME_ID,
-    gameName: GAME_NAME, amount: ALT_AMOUNT
-  })});
+async function initTrailSDK() {
+  try {
+    if (typeof TrailSDK === 'undefined') {
+      trailReady = false;
+      return;
+    }
+    trailSDK = new TrailSDK({ gameId: GAME_ID, tenantSlug: "trail" });
+    await trailSDK.init();
+    trailReady = true;
+  } catch (e) {
+    trailReady = false;
+    trailSDK = null;
+  }
+}
+
+async function trailStartSession() {
+  if (!trailReady || !trailSDK) return;
+  try {
+    await trailSDK.startSession();
+  } catch (e) { /* fallback: game works without SDK */ }
+}
+
+async function trailEndSession(score, correct, total) {
+  if (!trailReady || !trailSDK) return;
+  try {
+    const result = await trailSDK.endSession({ score, correct, total });
+    if (result && typeof result.alt === 'number') {
+      trailSDK.showAltPopup(result.alt);
+    }
+  } catch (e) { /* fallback: game works without SDK */ }
+}
+
+function getTrailPlayerName() {
+  if (!trailReady || !trailSDK) return null;
+  try {
+    return trailSDK.getPlayerName() || null;
+  } catch (e) { return null; }
+}
+
+// PIN authentication flow
+async function initPINAuth() {
+  const params = new URLSearchParams(location.search);
+  const token = params.get('token');
+
+  // If token is present, skip PIN
+  if (token) {
+    await initTrailSDK();
+    trailPlayerName = getTrailPlayerName();
+    showStartScreen();
+    return;
+  }
+
+  // Check if trail-auth.js is loaded
+  if (typeof TrailAuth !== 'undefined') {
+    const pinScreen = document.getElementById('pinScreen');
+    pinScreen.classList.remove('hidden-immediate');
+    try {
+      await TrailAuth.showPinInput(document.getElementById('pinScreen'), {
+        gameId: GAME_ID,
+        tenantSlug: "trail",
+        onSuccess: async function() {
+          await initTrailSDK();
+          trailPlayerName = getTrailPlayerName();
+          pinScreen.classList.add('hidden-immediate');
+          showStartScreen();
+        },
+        onError: function(err) {
+          const errEl = document.getElementById('pinError');
+          errEl.textContent = '認証に失敗しました。もう一度お試しください。';
+          errEl.classList.remove('hidden');
+        }
+      });
+    } catch (e) {
+      // TrailAuth failed, proceed without auth
+      document.getElementById('pinScreen').classList.add('hidden-immediate');
+      await initTrailSDK();
+      trailPlayerName = getTrailPlayerName();
+      showStartScreen();
+    }
+  } else {
+    // trail-auth.js not loaded, proceed without PIN
+    await initTrailSDK();
+    trailPlayerName = getTrailPlayerName();
+    showStartScreen();
+  }
+}
+
+function showStartScreen() {
+  const ss = document.getElementById('startScreen');
+  ss.classList.remove('hidden');
+  ss.classList.remove('hidden-immediate');
+  if (trailPlayerName) {
+    document.getElementById('playerNameText').textContent = trailPlayerName;
+    document.getElementById('playerInfo').classList.remove('hidden');
+  }
+  setAltBadgeVisible(true);
 }
 // ─────────────────────────────────────────────────────────
 
@@ -811,7 +933,7 @@ function showTumbleweed() {
   setTimeout(() => el.remove(), 2000);
 }
 
-function showCoinFloat(n) {} // deprecated, replaced by showAltFloat
+function showCoinFloat(n) {} // deprecated
 
 function getComboTitle(combo) {
   if (combo >= 10) return '🤠 伝説のガンマン！';
@@ -1130,8 +1252,8 @@ function startGame(mode){
     isAnimating:false,timeLeft:30.0,gameRunning:true,
     lastCountdownNum:0,questionNum:0,totalElapsed:0,isQuit:false,
   });
-  _trailResultSent = false;
 
+  trailStartSession();
   setAltBadgeVisible(false); // hide ALT during play
   const badge=document.getElementById('diffBadge');
   badge.className='diff-badge '+mode;
@@ -1189,8 +1311,10 @@ function endGame(){
 
     setAltBadgeVisible(true);
     updateAltBadge();
-    // TRAIL: クリア成功時のみスコア送信（途中リタイアは除外）
-    if (!state.isQuit && state.score > 0) sendResult(state.score);
+    // TRAIL SDK: クリア成功時のみスコア送信（途中リタイアは除外）
+    if (!state.isQuit && state.score > 0) {
+      trailEndSession(state.score, state.totalCorrect, state.totalAttempts);
+    }
     document.getElementById('gameOverScreen').classList.remove('hidden');
     // Mini ranking + register button (gunman only)
     const regBtn=document.getElementById('registerRankBtn');
@@ -1213,6 +1337,10 @@ function quitGame(){state.isQuit=true;endGame();}
 function goHome(){
   document.getElementById('gameOverScreen').classList.add('hidden');
   document.getElementById('startScreen').classList.remove('hidden');
+  if (trailPlayerName) {
+    document.getElementById('playerNameText').textContent = trailPlayerName;
+    document.getElementById('playerInfo').classList.remove('hidden');
+  }
   setAltBadgeVisible(true);
 }
 
@@ -1460,6 +1588,9 @@ updateAltBadge();
 // LINE name input listener
 document.getElementById('lineNameInput').addEventListener('input', updateLineReportBtn);
 
+// ===================== TRAIL SDK INIT =====================
+initPINAuth();
+
 // ===================== BATTLE MODE =====================
 const battleState = {
   p1: { score:0, combo:0, maxCombo:0, correct:0, attempts:0 },
@@ -1513,6 +1644,7 @@ function startBattle(diff) {
   document.getElementById('battleContainer').classList.remove('hidden');
   setAltBadgeVisible(false);
 
+  trailStartSession();
   updateBattleScores();
   battleNextRound();
 }
@@ -1739,6 +1871,13 @@ function endBattle() {
 
   document.getElementById('battleResultScreen').classList.remove('hidden');
   setAltBadgeVisible(true);
+  // TRAIL SDK: 対戦モードの結果を送信（P1のスコアを記録）
+  const winnerScore = Math.max(p1.score, p2.score);
+  const totalCorrect = p1.correct + p2.correct;
+  const totalAttempts = p1.attempts + p2.attempts;
+  if (winnerScore > 0) {
+    trailEndSession(winnerScore, totalCorrect, totalAttempts);
+  }
 }
 
 function battleGoHome() {
