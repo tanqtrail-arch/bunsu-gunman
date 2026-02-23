@@ -611,16 +611,8 @@
 const TRAIL_API = 'https://trail-game-pro-3-2.onrender.com';
 const TRAIL_PLAYER = new URLSearchParams(location.search).get('player') || null;
 
-function calcAlt(score) {
-  if (score >= 1000) return 30;
-  if (score >= 500)  return 20;
-  if (score >= 100)  return 10;
-  return 5;
-}
-
-async function sendResultToTrail(score) {
+async function sendResultToTrail(score, alt) {
   if (!TRAIL_PLAYER) return 0;
-  const alt = calcAlt(score);
   try {
     await fetch(`${TRAIL_API}/api/external/game-result`, {
       method: 'POST',
@@ -1170,7 +1162,7 @@ function endGame(){
 
     // TRAIL GP3: クリア成功時のみスコア送信（途中リタイアは除外）
     if (!state.isQuit && state.score > 0) {
-      const alt = await sendResultToTrail(state.score);
+      const alt = await sendResultToTrail(state.score, totalEarned);
       if (TRAIL_PLAYER && alt > 0) {
         document.getElementById('altEarned').textContent = `🪙 ${alt} ALT を獲得！`;
       }
@@ -1724,7 +1716,10 @@ function endBattle() {
   // TRAIL GP3: 対戦モードの結果を送信（勝者のスコアを記録）
   const winnerScore = Math.max(p1.score, p2.score);
   if (winnerScore > 0) {
-    sendResultToTrail(winnerScore);
+    const winner = p1.score >= p2.score ? p1 : p2;
+    const winnerAcc = winner.attempts > 0 ? Math.round((winner.correct / winner.attempts) * 100) : 0;
+    const winnerAlt = getStarBonus(getStarRating(winnerAcc));
+    sendResultToTrail(winnerScore, winnerAlt);
   }
 }
 
