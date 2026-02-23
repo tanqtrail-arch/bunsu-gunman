@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>分数ガンマン 🤠</title>
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://trail-game-pro-3-2.onrender.com/games/shared/trail-auth.css">
-<script src="https://trail-game-pro-3-2.onrender.com/js/trail-sdk.js"></script>
-<script src="https://trail-game-pro-3-2.onrender.com/games/shared/trail-auth.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&display=swap');
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -215,10 +212,6 @@
     .alt-stars{font-size:1.8rem;letter-spacing:6px;}
     .alt-breakdown{font-size:0.8rem;}
     .alt-total{font-size:1rem;}
-    .line-report-section{max-width:420px;padding:18px;}
-    .line-report-title{font-size:1rem;}
-    .line-name-input{font-size:1rem;padding:9px 14px;}
-    .line-report-btn{font-size:1.05rem;padding:12px;}
     .desert-silhouette{height:160px;}
     .time-bonus-float{font-size:1.4rem;}
     .time-penalty-float{font-size:1.5rem;}
@@ -260,7 +253,6 @@
     #startScreen .mode-desc{grid-column:1;grid-row:3;align-self:center;margin-top:60px;}
     #startScreen .diff-buttons{grid-column:2;grid-row:3;align-self:center;flex-direction:column;}
     #startScreen .ranking-btn-big{grid-column:1;grid-row:4;}
-    #startScreen .line-report-section{grid-column:2;grid-row:4;margin-top:0;}
     /* Game over landscape 2-column */
     #gameOverScreen{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;padding:20px 40px;align-content:center;justify-items:center;}
     #gameOverScreen .screen-title{grid-column:1/3;}
@@ -398,22 +390,6 @@
   .alt-total{font-size:0.85rem;color:var(--text-dim);}
   .alt-first-clear{color:var(--gold);font-size:0.85rem;font-weight:900;animation:nr-glow 1s ease-in-out infinite alternate;}
 
-  /* LINE report section */
-  .line-report-section{width:100%;max-width:340px;margin-top:12px;padding:14px;border-radius:12px;background:rgba(200,160,96,0.06);border:1px solid rgba(200,160,96,0.15);}
-  .line-report-title{font-size:0.85rem;font-weight:900;color:var(--sand);margin-bottom:8px;text-align:center;}
-  .line-name-input{width:100%;background:rgba(200,160,96,0.08);border:2px solid rgba(200,160,96,0.2);border-radius:8px;padding:7px 12px;font-size:0.9rem;font-family:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif;color:var(--text);outline:none;text-align:center;margin-bottom:8px;}
-  .line-name-input:focus{border-color:var(--gold);}
-  .line-name-input::placeholder{color:rgba(200,160,96,0.3);}
-  .line-report-btn{width:100%;padding:10px;border-radius:10px;border:2px solid #06c755;background:linear-gradient(135deg,#06c755,#04a847);color:#fff;font-size:0.95rem;font-weight:900;cursor:pointer;font-family:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif;transition:all 0.2s;}
-  .line-report-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 4px 15px rgba(6,199,85,0.3);}
-  .line-report-btn:disabled{opacity:0.3;cursor:not-allowed;filter:grayscale(0.8);}
-
-  /* LINE confirm overlay */
-  .line-confirm-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(10,5,0,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:400;gap:12px;backdrop-filter:blur(8px);}
-  .line-confirm-overlay.hidden{display:none;}
-  .line-confirm-text{font-size:1rem;font-weight:700;color:var(--text);text-align:center;line-height:1.6;}
-  .line-confirm-alt{font-size:1.8rem;font-weight:900;color:var(--gold);}
-  .line-confirm-btns{display:flex;gap:12px;}
 
   /* ===== TRAIL Integration Styles ===== */
   .trail-accent{color:#1a73e8;}
@@ -430,11 +406,6 @@
   @keyframes trail-alt-bounce{0%{transform:scale(0.5);opacity:0}50%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
   .trail-alt-label{font-size:1rem;color:var(--text-dim);margin-top:4px;}
 
-  /* PIN screen styles */
-  #pinScreen{z-index:600;background:var(--bg);}
-  #pinScreen .screen-title{margin-bottom:8px;}
-  .pin-loading{color:var(--text-dim);font-size:0.9rem;margin-top:12px;}
-  .pin-error{color:var(--accent);font-size:0.85rem;margin-top:8px;}
 
   @media(min-width:768px){
     .player-name-badge{font-size:1.1rem;padding:8px 20px;border-radius:14px;}
@@ -445,13 +416,6 @@
 </style>
 </head>
 <body>
-<!-- PIN Authentication Screen -->
-<div class="screen-overlay hidden-immediate" id="pinScreen">
-  <div class="screen-title">🤠 分数ガンマン</div>
-  <div class="screen-subtitle">認証中...</div>
-  <div class="pin-loading" id="pinLoading">TRAIL に接続しています...</div>
-  <div class="pin-error hidden" id="pinError"></div>
-</div>
 <div class="game-container">
   <div class="bg-particles" id="bgParticles"></div>
   <!-- Desert silhouette -->
@@ -476,12 +440,6 @@
       <button class="diff-btn hard" onclick="startGame('hard')"><span class="diff-label">🔥 むずかしい</span><span class="diff-desc">7/16, 11/20, 約分も</span></button>
     </div>
     <button class="ranking-btn-big" onclick="showRanking()">🏆 🔫 ガンマンランキング</button>
-    <!-- LINE Report Section -->
-    <div class="line-report-section">
-      <div class="line-report-title">💰 ALTをTRAILに報告する</div>
-      <input class="line-name-input" id="lineNameInput" type="text" placeholder="なまえを入力" maxlength="12">
-      <button class="line-report-btn" id="lineReportBtn" disabled onclick="showLineConfirm()">💬 LINEで報告する</button>
-    </div>
   </div>
   <!-- ALT badge fixed top-right (visible on home/overlays) -->
   <div class="alt-badge-fixed" id="altBadge"><span class="alt-icon">🪙</span><span id="altBadgeNum">0</span><span class="alt-unit">ALT</span></div>
@@ -515,7 +473,7 @@
       <button class="diff-btn normal" onclick="startGame('normal')">⚡ ふつう</button>
       <button class="diff-btn hard" onclick="startGame('hard')">🔥 むずかしい</button>
     </div>
-    <button class="btn" style="margin-top:10px;padding:10px 30px;font-size:1rem;" onclick="goHome()">🏠 HOME にもどる</button>
+    <button class="btn" style="margin-top:10px;padding:10px 30px;font-size:1rem;" onclick="goHome()">🏠 ホームに戻る</button>
   </div>
   <div class="ranking-overlay hidden" id="rankingOverlay">
     <div class="screen-title" style="font-size:1.6rem;">🏆 🔫 ガンマンランキング</div>
@@ -648,117 +606,51 @@
   </div>
 </div>
 <div class="result-popup" id="resultPopup"></div>
-<!-- LINE confirm -->
-<div class="line-confirm-overlay hidden" id="lineConfirmOverlay">
-  <div style="font-size:1.2rem;">⚠️</div>
-  <div class="line-confirm-text" id="lineConfirmText"></div>
-  <div class="line-confirm-alt" id="lineConfirmAlt"></div>
-  <div class="line-confirm-text">報告してALTをリセットします</div>
-  <div class="line-confirm-btns">
-    <button class="ranking-btn" style="padding:10px 24px;" onclick="cancelLineReport()">やめる</button>
-    <button class="btn" style="padding:10px 24px;font-size:0.95rem;background:linear-gradient(135deg,#06c755,#04a847);border-color:#06c755;" onclick="executeLineReport()">OK！送る</button>
-  </div>
-</div>
 <script>
-// ─── TRAIL SDK Integration ───────────────────────────────
-const GAME_ID = 2;
-let trailSDK = null;
-let trailPlayerName = null;
-let trailReady = false;
+// ─── TRAIL GP3 連携 ───
+const TRAIL_API = 'https://trail-game-pro-3-2.onrender.com';
+const TRAIL_PLAYER = new URLSearchParams(location.search).get('player') || null;
 
-async function initTrailSDK() {
+function calcAlt(score) {
+  if (score >= 1000) return 30;
+  if (score >= 500)  return 20;
+  if (score >= 100)  return 10;
+  return 5;
+}
+
+async function sendResultToTrail(score) {
+  if (!TRAIL_PLAYER) return 0;
+  const alt = calcAlt(score);
   try {
-    if (typeof TrailSDK === 'undefined') {
-      trailReady = false;
-      return;
-    }
-    trailSDK = new TrailSDK({ gameId: GAME_ID, tenantSlug: "trail" });
-    await trailSDK.init();
-    trailReady = true;
+    await fetch(`${TRAIL_API}/api/external/game-result`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        player: TRAIL_PLAYER,
+        game_id: 'bunsu-gunman',
+        game_name: '分数ガンマン',
+        score: score,
+        alt: alt
+      })
+    });
   } catch (e) {
-    trailReady = false;
-    trailSDK = null;
+    console.error('ALT送信失敗:', e);
   }
+  return alt;
 }
 
-async function trailStartSession() {
-  if (!trailReady || !trailSDK) return;
-  try {
-    await trailSDK.startSession();
-  } catch (e) { /* fallback: game works without SDK */ }
-}
-
-async function trailEndSession(score, correct, total) {
-  if (!trailReady || !trailSDK) return;
-  try {
-    const result = await trailSDK.endSession({ score, correct, total });
-    if (result && typeof result.alt === 'number') {
-      trailSDK.showAltPopup(result.alt);
-    }
-  } catch (e) { /* fallback: game works without SDK */ }
-}
-
-function getTrailPlayerName() {
-  if (!trailReady || !trailSDK) return null;
-  try {
-    return trailSDK.getPlayerName() || null;
-  } catch (e) { return null; }
-}
-
-// PIN authentication flow
-async function initPINAuth() {
-  const params = new URLSearchParams(location.search);
-  const token = params.get('token');
-
-  // If token is present, skip PIN
-  if (token) {
-    await initTrailSDK();
-    trailPlayerName = getTrailPlayerName();
-    showStartScreen();
-    return;
-  }
-
-  // Check if trail-auth.js is loaded
-  if (typeof TrailAuth !== 'undefined') {
-    const pinScreen = document.getElementById('pinScreen');
-    pinScreen.classList.remove('hidden-immediate');
-    try {
-      await TrailAuth.showPinInput(document.getElementById('pinScreen'), {
-        gameId: GAME_ID,
-        tenantSlug: "trail",
-        onSuccess: async function() {
-          await initTrailSDK();
-          trailPlayerName = getTrailPlayerName();
-          pinScreen.classList.add('hidden-immediate');
-          showStartScreen();
-        },
-        onError: function(err) {
-          const errEl = document.getElementById('pinError');
-          errEl.textContent = '認証に失敗しました。もう一度お試しください。';
-          errEl.classList.remove('hidden');
-        }
-      });
-    } catch (e) {
-      // TrailAuth failed, proceed without auth
-      document.getElementById('pinScreen').classList.add('hidden-immediate');
-      await initTrailSDK();
-      trailPlayerName = getTrailPlayerName();
-      showStartScreen();
-    }
-  } else {
-    // trail-auth.js not loaded, proceed without PIN
-    await initTrailSDK();
-    trailPlayerName = getTrailPlayerName();
-    showStartScreen();
-  }
+function goHome() {
+  window.location.href = TRAIL_PLAYER
+    ? 'https://trail-game-pro-3-2.onrender.com'
+    : location.href.split('?')[0];
 }
 
 function showStartScreen() {
   const ss = document.getElementById('startScreen');
   ss.classList.remove('hidden');
   ss.classList.remove('hidden-immediate');
-  if (trailPlayerName) {
-    document.getElementById('playerNameText').textContent = trailPlayerName;
+  if (TRAIL_PLAYER) {
+    document.getElementById('playerNameText').textContent = TRAIL_PLAYER;
     document.getElementById('playerInfo').classList.remove('hidden');
   }
   setAltBadgeVisible(true);
@@ -788,8 +680,6 @@ let highScore = 0;
 
 function updateAltBadge() {
   const el = document.getElementById('altBadgeNum'); if (el) el.textContent = totalAlt;
-  // Update LINE report button state
-  updateLineReportBtn();
 }
 
 function getAltReward(combo) {
@@ -831,36 +721,6 @@ function setAltBadgeVisible(v) {
   document.getElementById('altBadge').classList.toggle('hidden', !v);
 }
 
-// LINE report
-function updateLineReportBtn() {
-  const nameVal = (document.getElementById('lineNameInput').value || '').trim();
-  const btn = document.getElementById('lineReportBtn');
-  btn.disabled = (totalAlt <= 0 || nameVal.length === 0);
-}
-
-function showLineConfirm() {
-  const name = (document.getElementById('lineNameInput').value || '').trim();
-  if (!name || totalAlt <= 0) return;
-  document.getElementById('lineConfirmText').textContent = `${name}さんの記録を報告します`;
-  document.getElementById('lineConfirmAlt').textContent = `💰 ${totalAlt} ALT`;
-  document.getElementById('lineConfirmOverlay').classList.remove('hidden');
-}
-
-function cancelLineReport() {
-  document.getElementById('lineConfirmOverlay').classList.add('hidden');
-}
-
-function executeLineReport() {
-  const name = (document.getElementById('lineNameInput').value || '').trim();
-  const msg = `【分数ガンマン ALT報告】\n名前: ${name}\n💰 ${totalAlt}ALT\nハイスコア: ${highScore}点`;
-  const encoded = encodeURIComponent(msg);
-  const url = `https://line.me/R/oaMessage/@trail_official/?${encoded}`;
-  window.open(url, '_blank');
-  // Reset ALT
-  totalAlt = 0;
-  updateAltBadge();
-  document.getElementById('lineConfirmOverlay').classList.add('hidden');
-}
 
 // ===================== FRACTION POOLS =====================
 const easyPool = [
@@ -1253,7 +1113,6 @@ function startGame(mode){
     lastCountdownNum:0,questionNum:0,totalElapsed:0,isQuit:false,
   });
 
-  trailStartSession();
   setAltBadgeVisible(false); // hide ALT during play
   const badge=document.getElementById('diffBadge');
   badge.className='diff-badge '+mode;
@@ -1269,7 +1128,7 @@ function endGame(){
   state.gameRunning=false;
   clearQuestionTimer();
   if(state.timerRAF)cancelAnimationFrame(state.timerRAF);
-  setTimeout(()=>{
+  setTimeout(async ()=>{
     document.getElementById('finalScore').textContent=state.score;
     document.getElementById('finalCorrect').textContent=state.totalCorrect;
     document.getElementById('finalCombo').textContent=state.maxCombo;
@@ -1309,12 +1168,16 @@ function endGame(){
     fcEl.classList.toggle('hidden', !isFirst);
     document.getElementById('altTotal').textContent = `合計: ${totalAlt} ALT`;
 
+    // TRAIL GP3: クリア成功時のみスコア送信（途中リタイアは除外）
+    if (!state.isQuit && state.score > 0) {
+      const alt = await sendResultToTrail(state.score);
+      if (TRAIL_PLAYER && alt > 0) {
+        document.getElementById('altEarned').textContent = `🪙 ${alt} ALT を獲得！`;
+      }
+    }
+
     setAltBadgeVisible(true);
     updateAltBadge();
-    // TRAIL SDK: クリア成功時のみスコア送信（途中リタイアは除外）
-    if (!state.isQuit && state.score > 0) {
-      trailEndSession(state.score, state.totalCorrect, state.totalAttempts);
-    }
     document.getElementById('gameOverScreen').classList.remove('hidden');
     // Mini ranking + register button (gunman only)
     const regBtn=document.getElementById('registerRankBtn');
@@ -1333,16 +1196,6 @@ function endGame(){
 }
 
 function quitGame(){state.isQuit=true;endGame();}
-
-function goHome(){
-  document.getElementById('gameOverScreen').classList.add('hidden');
-  document.getElementById('startScreen').classList.remove('hidden');
-  if (trailPlayerName) {
-    document.getElementById('playerNameText').textContent = trailPlayerName;
-    document.getElementById('playerInfo').classList.remove('hidden');
-  }
-  setAltBadgeVisible(true);
-}
 
 // ===================== RANKING (weekly + alltime, mode x difficulty) =====================
 const MAX_RANKING=7;
@@ -1585,11 +1438,9 @@ function hideRanking(){document.getElementById('rankingOverlay').classList.add('
 
 loadRankings();
 updateAltBadge();
-// LINE name input listener
-document.getElementById('lineNameInput').addEventListener('input', updateLineReportBtn);
 
-// ===================== TRAIL SDK INIT =====================
-initPINAuth();
+// ===================== TRAIL GP3 INIT =====================
+showStartScreen();
 
 // ===================== BATTLE MODE =====================
 const battleState = {
@@ -1644,7 +1495,6 @@ function startBattle(diff) {
   document.getElementById('battleContainer').classList.remove('hidden');
   setAltBadgeVisible(false);
 
-  trailStartSession();
   updateBattleScores();
   battleNextRound();
 }
@@ -1871,20 +1721,15 @@ function endBattle() {
 
   document.getElementById('battleResultScreen').classList.remove('hidden');
   setAltBadgeVisible(true);
-  // TRAIL SDK: 対戦モードの結果を送信（P1のスコアを記録）
+  // TRAIL GP3: 対戦モードの結果を送信（勝者のスコアを記録）
   const winnerScore = Math.max(p1.score, p2.score);
-  const totalCorrect = p1.correct + p2.correct;
-  const totalAttempts = p1.attempts + p2.attempts;
   if (winnerScore > 0) {
-    trailEndSession(winnerScore, totalCorrect, totalAttempts);
+    sendResultToTrail(winnerScore);
   }
 }
 
 function battleGoHome() {
-  document.getElementById('battleResultScreen').classList.add('hidden');
-  document.getElementById('battleContainer').classList.add('hidden');
-  document.getElementById('startScreen').classList.remove('hidden');
-  setAltBadgeVisible(true);
+  goHome();
 }
 
 // ===================== BG =====================
