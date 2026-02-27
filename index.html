@@ -460,6 +460,8 @@
       <div class="alt-first-clear hidden" id="altFirstClear">🌟 初クリアボーナス +3 ALT!</div>
       <div class="alt-total" id="altTotal"></div>
     </div>
+    <!-- 🆕 TrailNav ALT獲得表示 -->
+    <div id="altEarnedDisplay" style="display:none; text-align:center; padding:10px; margin:10px 0; background:linear-gradient(135deg,rgba(255,204,34,0.15),rgba(255,170,0,0.1)); border:1px solid rgba(255,204,34,0.3); border-radius:12px; font-weight:900; color:#886600; font-size:16px;">💰 +<span id="altEarnedVal">0</span> ALT ゲット！</div>
     <button class="ranking-btn-big" id="rankDetailBtn" onclick="showRanking(state.gameMode,state.mode)">🏆 ランキング詳細</button>
     <button class="ranking-btn-big" id="registerRankBtn" style="background:linear-gradient(135deg,var(--leather),#6b4a2a);border-color:var(--rope);display:none;" onclick="startNameEntry()">📝 ランキングに登録する</button>
     <div class="mini-ranking" id="miniRanking"></div>
@@ -646,7 +648,21 @@ function showStartScreen() {
     document.getElementById('playerInfo').classList.remove('hidden');
   }
   setAltBadgeVisible(true);
+  if(typeof TrailNav!=='undefined') TrailNav.showNav(); // 🆕
 }
+
+// 🆕 TrailNav: ゲームホームに戻る
+window.showGameHome = function() {
+  if(state.gameRunning) {
+    if(!confirm('ゲームを中断してホームに戻りますか？')) return;
+    state.gameRunning=false;
+    clearQuestionTimer();
+    if(state.timerRAF) cancelAnimationFrame(state.timerRAF);
+    if(typeof TrailNav!=='undefined') TrailNav.flushAltWithRetry();
+  }
+  document.getElementById('gameOverScreen').classList.add('hidden');
+  showStartScreen();
+};
 // ─────────────────────────────────────────────────────────
 
 // ===================== STATE =====================
@@ -667,6 +683,7 @@ let selectedGameMode = 'normal';
 
 // ===================== ALT SYSTEM =====================
 let totalAlt = 0;
+let altEarned = 0; // 🆕 TrailNav ALT獲得トラッカー
 let clearedLevels = {}; // tracks first clears: { 'easy-normal': true, ... }
 let highScore = 0;
 
@@ -1053,6 +1070,10 @@ function confirmAnswer(frac,card){
   if(fractionsEqual(frac,state.currentAnswer)){
     state.combo++;if(state.combo>state.maxCombo)state.maxCombo=state.combo;
     state.totalCorrect++;
+    // 🆕 TrailNav ALT付与（コンボ4以上で2倍）
+    const altGain=(state.combo>=4)?2:1;
+    if(typeof TrailNav!=='undefined') TrailNav.earnAlt(altGain,'正解');
+    altEarned+=altGain;
     const points=100*Math.max(1,state.combo);state.score+=points;
     updateScore();updateCombo();updateCorrectCount();shatterPie();showBang();
     const elapsed=(Date.now()-state.questionStartTime)/1000;
@@ -1106,6 +1127,8 @@ function startGame(mode){
   });
 
   setAltBadgeVisible(false); // hide ALT during play
+  altEarned=0; // 🆕 ALTリセット
+  if(typeof TrailNav!=='undefined') TrailNav.hideNav(); // 🆕
   const badge=document.getElementById('diffBadge');
   badge.className='diff-badge '+mode;
   badge.textContent=(mode==='easy'?'🌱 かんたん':mode==='normal'?'⚡ ふつう':'🔥 むずかしい');
@@ -1168,7 +1191,13 @@ function endGame(){
       }
     }
 
+    // 🆕 TrailNav ALT送信＆表示
+    if(typeof TrailNav!=='undefined') await TrailNav.flushAltWithRetry();
+    const altDisplay=document.getElementById('altEarnedDisplay');
+    if(altDisplay){altDisplay.style.display=altEarned>0?'block':'none';if(altEarned>0)document.getElementById('altEarnedVal').textContent=altEarned;}
+
     setAltBadgeVisible(true);
+    if(typeof TrailNav!=='undefined') TrailNav.showNav(); // 🆕
     updateAltBadge();
     document.getElementById('gameOverScreen').classList.remove('hidden');
     // Mini ranking + register button (gunman only)
@@ -1733,6 +1762,17 @@ function battleGoHome() {
   for(let i=0;i<18;i++){const p=document.createElement('div');p.className='bg-particle';const size=4+Math.random()*18;
   p.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${size}px;height:${size}px;background:${pickRandom(colors)};animation-delay:${Math.random()*5}s;animation-duration:${5+Math.random()*8}s;`;c.appendChild(p);}
 })();
+</script>
+<!-- ===== 🆕 TRAIL共通ナビ ===== -->
+<script src="trail-nav.js"></script>
+<script>
+TrailNav.init({
+  gameName: '分数ガンマン',
+  gameEmoji: '🔫',
+  gameHomeId: 'startScreen',
+  tgp32Url: 'https://trail-game-pro-3-2.onrender.com',
+  apiBase: 'https://trail-game-pro-3-2.onrender.com/api',
+});
 </script>
 </body>
 </html>
