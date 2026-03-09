@@ -634,9 +634,7 @@ async function sendResultToTrail(score, alt) {
 }
 
 function goHome() {
-  window.location.href = TRAIL_PLAYER
-    ? 'https://trail-game-pro-3-2.onrender.com'
-    : location.href.split('?')[0];
+  DarwinBridge.exit();
 }
 
 function showStartScreen() {
@@ -651,17 +649,8 @@ function showStartScreen() {
   if(typeof TrailNav!=='undefined') TrailNav.showNav(); // 🆕
 }
 
-// 🆕 TrailNav: ゲームホームに戻る
 window.showGameHome = function() {
-  if(state.gameRunning) {
-    if(!confirm('ゲームを中断してホームに戻りますか？')) return;
-    state.gameRunning=false;
-    clearQuestionTimer();
-    if(state.timerRAF) cancelAnimationFrame(state.timerRAF);
-    if(typeof TrailNav!=='undefined') TrailNav.flushAltWithRetry();
-  }
-  document.getElementById('gameOverScreen').classList.add('hidden');
-  showStartScreen();
+  DarwinBridge.exit();
 };
 // ─────────────────────────────────────────────────────────
 
@@ -1183,13 +1172,8 @@ function endGame(){
     fcEl.classList.toggle('hidden', !isFirst);
     document.getElementById('altTotal').textContent = `合計: ${totalAlt} ALT`;
 
-    // TRAIL GP3: クリア成功時のみスコア送信（途中リタイアは除外）
-    if (!state.isQuit && state.score > 0) {
-      const alt = await sendResultToTrail(state.score, totalEarned);
-      if (TRAIL_PLAYER && alt > 0) {
-        document.getElementById('altEarned').textContent = `🪙 ${alt} ALT を獲得！`;
-      }
-    }
+    // DarwinBridge: ステージクリア通知
+    DarwinBridge.stageClear({ score: state.score, correct: state.totalCorrect, total: state.totalAttempts });
 
     // 🆕 TrailNav ALT送信＆表示
     if(typeof TrailNav!=='undefined') await TrailNav.flushAltWithRetry();
@@ -1763,16 +1747,8 @@ function battleGoHome() {
   p.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${size}px;height:${size}px;background:${pickRandom(colors)};animation-delay:${Math.random()*5}s;animation-duration:${5+Math.random()*8}s;`;c.appendChild(p);}
 })();
 </script>
-<!-- ===== 🆕 TRAIL共通ナビ ===== -->
-<script src="trail-nav.js"></script>
 <script>
-TrailNav.init({
-  gameName: '分数ガンマン',
-  gameEmoji: '🔫',
-  gameHomeId: 'startScreen',
-  tgp32Url: 'https://trail-game-pro-3-2.onrender.com',
-  apiBase: 'https://trail-game-pro-3-2.onrender.com/api',
-});
+DarwinBridge.ready();
 </script>
 </body>
 </html>
